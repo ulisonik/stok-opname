@@ -542,6 +542,114 @@ details.dd[open] summary::after{transform:rotate(180deg)}
 .mi3{flex:none}
 .mi3.wide,.dmsmeta .empty{grid-column:1/-1}
 
+.dms-row{display:flex;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.dms-row .d{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:600;color:var(--ink-2)}
+.dms-row .d+.d{border-left:1px solid var(--line)}
+.dms-row .d>span:last-child{min-width:0}
+.dms-row b{font-size:16px;font-weight:800;color:var(--ink);margin-right:2px}
+.dms-row .si{width:24px;height:24px}
+.dms-row .si svg{width:14px;height:14px}
+
+/* hasil vs stok DMS: kartu per barang, tanpa geser samping */
+.rk-list{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr))}
+.rk{border-radius:var(--r-s);background:var(--surface-2);padding:12px}
+.rk-h{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center}
+.rk-h .nm{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal;overflow:hidden}
+.rk-s{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:10px;padding-top:10px;border-top:1px solid var(--line);text-align:center}
+.rk-s>div{min-width:0;padding:0 4px}
+.rk-s>div+div{border-left:1px solid var(--line)}
+.rk-s small{display:block;font-size:11px;font-weight:600;color:var(--ink-2)}
+.rk-s b{display:block;font-size:16px;font-weight:800;line-height:1.3;font-variant-numeric:tabular-nums}
+.rk-s em{display:block;font-style:normal;font-size:11px;line-height:1.3;color:var(--ink-2)}
+.rk-s .neg b,.rk-s .neg em{color:var(--minus)}
+.rk-s .pos b,.rk-s .pos em{color:var(--plus)}
+.rk-s .okc b,.rk-s .okc em{color:var(--ok)}
+.si.neg{background:var(--minus-bg);color:var(--minus)}
+.si.plus{background:var(--plus-bg);color:var(--plus)}
+details.devd{margin-top:8px;border-top:1px solid var(--line)}
+details.devd summary{list-style:none;display:flex;align-items:center;justify-content:space-between;min-height:36px;font-size:12px;font-weight:700;color:var(--brand);cursor:pointer}
+details.devd summary::-webkit-details-marker{display:none}
+details.devd summary span{margin-left:6px;padding:0 7px;border-radius:99px;background:var(--brand-soft);font-size:11px}
+details.devd summary::after{content:"";width:14px;height:14px;margin-left:auto;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231769C8' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat center/14px;transition:transform .2s}
+details.devd[open] summary::after{transform:rotate(180deg)}
+.dvr{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:5px 0;color:var(--ink-2)}
+.dvr .n{font-weight:600;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dvr b{color:var(--ink)}
+
+.srow{display:flex;gap:8px;align-items:center}
+.srow .sbox{flex:1;min-width:0}
+.xbtn{height:42px;padding:0 12px;border-radius:12px;font-size:12px;flex:none}
+
+/* placeholder tidak boleh terpotong */
+#scanInput::placeholder{font-size:13px;font-weight:500;color:var(--ink-2);opacity:.85}
+@media (max-width:359px){.xbtn span{display:none}.xbtn{padding:0 11px}}
+@media (max-width:359px){.scanbox>svg{display:none}.scanbox{padding-left:12px;gap:6px}}
+
+.rk-s.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.rk .pill.belum{background:var(--surface);color:var(--ink-2)}
+
+/* ringkasan Rekap: empat kotak dengan susunan sama */
+.tile{padding:10px 12px;display:flex;flex-direction:column;--tc:var(--brand)}
+.tile.t-ok{--tc:var(--ok)}
+.tile.t-wait{--tc:#7B8EA6}
+.t-h{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.t-k{font-size:12px;font-weight:700;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t-p{flex:none;font-size:11px;font-weight:800;padding:1px 7px;border-radius:99px;background:rgba(255,255,255,.7);color:var(--ink)}
+@media (prefers-color-scheme: dark){.t-p{background:rgba(255,255,255,.14)}}
+.t-v{display:flex;align-items:baseline;gap:5px;margin-top:4px;white-space:nowrap}
+.t-v b{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--tc)}
+.t-sel .t-v b{color:var(--minus)}
+.t-v small{font-size:12px;font-weight:600;color:var(--ink-2)}
+.t-bar{display:flex;height:6px;margin-top:8px;border-radius:99px;background:rgba(0,0,0,.08);overflow:hidden}
+@media (prefers-color-scheme: dark){.t-bar{background:rgba(255,255,255,.12)}}
+.t-bar i{display:block;height:100%;background:var(--tc)}
+.t-bar i.neg{background:var(--minus)}
+.t-bar i.pos{background:var(--plus)}
+.t-f{margin-top:7px;font-size:11px;line-height:1.4;color:var(--ink-2)}
+.t-f b{color:var(--ink);font-variant-numeric:tabular-nums}
+.t-f .neg{color:var(--minus);font-weight:600}
+.t-f .pos{color:var(--plus);font-weight:600}
+.t-f .warnt{color:var(--warn-ink);font-weight:600}
+
+.chips i.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--ok);flex:none}
+.chips i.dot.wait{background:#D99A00}
+.chips i.dot.off{background:var(--minus)}
+#devHint{margin:8px 0 0}
+#devMore{width:100%;margin-top:8px}
+.devs{margin-top:10px}
+
+/* header: sapaan sejajar pil sesi, nama sejajar status sinkron (kisi dua baris) */
+.greet{position:relative;z-index:40;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:30px 38px;align-items:center;column-gap:12px;row-gap:4px}
+.greet-l,.greet-r{display:contents}
+.greet-hi{grid-area:1/1;margin:0}
+.devchip{grid-area:2/1;justify-self:start;min-width:0;margin:0}
+.sess-note{grid-area:1/2;justify-self:end;max-width:240px}
+.sync-wrap{grid-area:2/2;justify-self:end}
+.greet{grid-template-rows:auto auto;row-gap:0}
+.devchip b{font-size:25px;line-height:1.15}
+.devchip .dv-pen{width:28px;height:28px}
+.sess-note{padding:3px 8px 3px 10px}
+.greet-hi{line-height:1.2}
+.devchip{padding:0}
+.devchip,.sync-wrap{margin-top:-5px}
+
+/* nama panjang: nama penghitung diprioritaskan, pil sesi mengalah lebih dulu */
+.sess-note{max-width:min(240px,40vw)}
+.greet-hi{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.devchip[data-len="l"] b{font-size:21px}
+.devchip[data-len="xl"] b{font-size:17px}
+@media (max-width:340px){
+  .greet{grid-template-rows:auto auto auto}
+  .devchip{grid-area:2/1/3/3;justify-self:stretch}
+  .devchip b{min-width:0}
+  .sync-wrap{grid-area:3/1/4/3;justify-self:end;margin-top:2px}
+  .sess-note{max-width:46vw}
+}
+
+/* tombol kamera yang belum bisa dipakai tetap bisa diketuk (memberi alasan) */
+.camfab.off{opacity:.5;box-shadow:none}
+.tabs .fab.off{opacity:.55;box-shadow:none}
+
 </style>
 </head>
 <body>
@@ -605,7 +713,7 @@ details.dd[open] summary::after{transform:rotate(180deg)}
         <div class="scanrow">
           <div class="scanbox">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6v12M7.5 6v12M11 6v12M14.5 6v12M18 6v12M21 6v12"/></svg>
-            <input type="text" id="scanInput" aria-label="Scan atau ketik barcode, kode SKU, atau nama barang" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="search" placeholder="Barcode / SKU / nama">
+            <input type="text" id="scanInput" aria-label="Scan atau ketik barcode, kode SKU, atau nama barang" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="search" placeholder="Barcode, SKU, nama">
             <button class="go" id="scanBtn" type="button" aria-label="Cari" title="Cari"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
           </div>
           <button class="camfab" id="camBtn" type="button" aria-label="Scan pakai kamera" title="Scan pakai kamera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
@@ -633,14 +741,14 @@ details.dd[open] summary::after{transform:rotate(180deg)}
         </div>
         <div class="q-isi" id="qIWrap" hidden>
           <div class="qi-h"><label for="qI">Isi per karton (pcs)</label><span class="opt">Opsional</span><span class="reqchip">Wajib <i>*</i></span></div>
-          <input type="number" id="qI" inputmode="numeric" min="1" placeholder="mis. 12">
+          <input type="text" id="qI" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="mis. 12">
           <small>Isi kalau Anda tahu, supaya pcs otomatis menjadi karton dan diingat untuk barang ini. Wajib diisi kalau Anda mengisi Karton.</small>
         </div>
         <div class="qty-h">Jumlah <span class="req">*</span><small>isi minimal satu</small></div>
         <div class="qty">
-          <div class="q"><label for="qK">Karton</label><input type="number" id="qK" inputmode="numeric" min="0" placeholder="0"><small id="qKh">isi belum ada</small></div>
-          <div class="q"><label for="qL">Lusin</label><input type="number" id="qL" inputmode="numeric" min="0" placeholder="0"><small>12 pcs</small></div>
-          <div class="q"><label for="qP">Pcs</label><input type="number" id="qP" inputmode="numeric" min="0" placeholder="0"><small>satuan</small></div>
+          <div class="q"><label for="qK">Karton</label><input type="text" id="qK" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="0"><small id="qKh">isi belum ada</small></div>
+          <div class="q"><label for="qL">Lusin</label><input type="text" id="qL" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="0"><small>12 pcs</small></div>
+          <div class="q"><label for="qP">Pcs</label><input type="text" id="qP" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="0"><small>satuan</small></div>
         </div>
         <div class="prod-f">
           <span class="preview" id="pcPreview"></span>
@@ -671,6 +779,10 @@ details.dd[open] summary::after{transform:rotate(180deg)}
           <div><b id="heroP">0</b><span>Pcs</span></div>
         </div>
         <div id="statCard" hidden>
+          <div class="dms-row">
+            <div class="d"><span class="si ok" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b id="heroIn">0</b> SKU ada di DMS</span></div>
+            <div class="d"><span class="si warn" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l9 16H3L12 4z"/><path d="M12 10v4M12 17h.01"/></svg></span><span><b id="heroOut">0</b> SKU di luar DMS</span></div>
+          </div>
           <div class="bar"><i id="statBar"></i></div>
           <div class="bar-meta"><span>Belum dihitung <b id="statLeft">0</b> SKU</span><b class="pct" id="statPct">0%</b></div>
         </div>
@@ -692,17 +804,23 @@ details.dd[open] summary::after{transform:rotate(180deg)}
       <div class="tiles" id="tiles"></div>
       <div class="panel">
         <h3><span class="ci"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></span>Device penghitung <span class="cnt" id="devCnt"></span></h3>
-        <div class="dev-legend"><span class="on"><i></i>Aktif &lt;5 mnt</span><span class="wait"><i></i>Menunggu &lt;15 mnt</span><span class="off"><i></i>Tidak aktif</span></div>
+        <label class="sbox" id="devQWrap" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="devQ" placeholder="Cari nama device" autocomplete="off" enterkeyhint="search" aria-label="Cari device"><button type="button" class="clr" id="devQClr" aria-label="Hapus pencarian" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></label>
+        <div class="chips" id="devChips" role="group" aria-label="Filter status device"></div>
+        <p class="sub" id="devHint">Aktif: update &lt;5 mnt · Menunggu: &lt;15 mnt</p>
         <div class="devs" id="devList"></div>
+        <button class="btn more" id="devMore" type="button" hidden></button>
       </div>
       <div class="panel">
         <h3><span class="ci"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h13l-3-3M20 17H7l3 3"/></svg></span>Hasil vs stok DMS</h3>
-        <div class="rk-tools">
-          <div class="seg" id="rkFilter" role="group" aria-label="Filter status"></div>
-          <input type="search" id="rkSearch" placeholder="Cari SKU / nama barang">
-          <button class="btn" id="exportBtn" type="button">Export Excel</button>
+        <div class="tb">
+          <div class="srow">
+            <label class="sbox"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="rkSearch" placeholder="Cari SKU, barcode, nama" autocomplete="off" enterkeyhint="search" aria-label="Cari di hasil rekap"></label>
+            <button class="btn ic xbtn" id="exportBtn" type="button" aria-label="Export Excel" title="Export Excel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12M7 11l5 5 5-5M5 20h14"/></svg><span>Export</span></button>
+          </div>
+          <div class="chips" id="rkFilter" role="group" aria-label="Filter status"></div>
+          <div class="tb-meta"><label class="sortsel"><span>Urutkan</span><select id="rkSort" aria-label="Urutkan"><option value="perhatian">Perlu perhatian</option><option value="selisih">Selisih terbesar</option><option value="hitung">Total hitung</option><option value="nama">Nama A–Z</option><option value="sku">Kode SKU</option></select></label><span class="tb-r"><span id="rkMeta"></span><button type="button" class="rst" id="rkRst" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Reset</button></span></div>
         </div>
-        <div class="tablewrap"><table id="rkTable"></table></div>
+        <div class="rk-list" id="rkList"></div>
         <button class="btn more" id="rkMore" type="button" hidden>Tampilkan lebih banyak</button>
         <p class="hint">Total = jumlah semua device. Rekap diperbarui tiap 20 detik.</p>
       </div>
@@ -735,8 +853,12 @@ details.dd[open] summary::after{transform:rotate(180deg)}
       </div>
       <div class="panel">
         <h3><span class="ci"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5"/></svg></span>Master barang <span class="cnt" id="dmsCnt"></span></h3>
-        <div class="tb"><label class="sbox"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="dmsSearch" placeholder="Cari kode SKU, barcode, atau nama" autocomplete="off" aria-label="Cari di master barang"></label></div>
-        <div class="tablewrap"><table id="dmsTable"></table></div>
+        <div class="tb">
+          <label class="sbox"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="dmsSearch" placeholder="Cari kode SKU, barcode, atau nama" autocomplete="off" enterkeyhint="search" aria-label="Cari di master barang"></label>
+          <div class="chips" id="dmsChips" role="group" aria-label="Filter master barang"></div>
+          <div class="tb-meta"><label class="sortsel"><span>Urutkan</span><select id="dmsSort" aria-label="Urutkan"><option value="sku">Kode SKU</option><option value="nama">Nama A–Z</option><option value="stok">Stok terbanyak</option></select></label><span class="tb-r"><span id="dmsCntMeta"></span><button type="button" class="rst" id="dmsRst" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>Reset</button></span></div>
+        </div>
+        <div class="rk-list" id="dmsList"></div>
         <button class="btn more" id="dmsMore" type="button" hidden>Tampilkan lebih banyak</button>
       </div>
     </section>
@@ -793,6 +915,14 @@ details.dd[open] summary::after{transform:rotate(180deg)}
     <div class="modal-h"><b id="camTitle">Scan kamera</b><button class="btn sm" id="camClose" type="button">Tutup</button></div>
     <div class="cam-wrap"><video id="camVideo" playsinline muted></video><div id="camFallback"></div><div class="cam-guide" aria-hidden="true"></div></div>
     <div class="cam-msg" id="camMsg"></div>
+  </div>
+</div>
+
+<div class="modal" id="leaveGate" hidden role="dialog" aria-modal="true" aria-labelledby="lgTitle">
+  <div class="modal-box">
+    <div class="ng-h"><span class="si warn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l9 16H3L12 4z"/><path d="M12 10v4M12 17h.01"/></svg></span><b id="lgTitle">Keluar dari halaman?</b></div>
+    <div class="ng-body" id="lgText"></div>
+    <div class="ng-act"><button class="btn danger" id="lgYes" type="button">Keluar</button><button class="btn primary" id="lgNo" type="button">Tetap di sini</button></div>
   </div>
 </div>
 
@@ -1033,6 +1163,14 @@ function saveLocal(){
   LS.put('so-dirty-' + S.sessionId, S.dirty);
   LS.put('so-plog-' + S.sessionId, S.plog);
 }
+function whyNoCount(){
+  const s = curSession();
+  if (!S.deviceName) return 'Isi nama device dulu (ketuk nama di header).';
+  if (!s) return MODE === 'hitung' ? 'Belum ada sesi berjalan. Ketuk tombol muat ulang di kanan atas.' : 'Belum ada sesi. Buat sesi di tab Sesi.';
+  if (s.status === 'closed' || S.blocked[S.sessionId]) return 'Sesi sudah ditutup. ' + (MODE === 'admin' ? 'Buka lagi di tab Sesi.' : 'Minta admin membukanya lagi.');
+  if (!S.ready) return 'Hitungan sedang dimuat, coba lagi sebentar.';
+  return 'Belum bisa menghitung.';
+}
 function canCount(){
   const s = curSession();
   return !!(s && s.status !== 'closed' && S.deviceName && S.ready && !S.blocked[S.sessionId]);
@@ -1141,6 +1279,7 @@ function markDirty(sku){ S.dirty[sku] = rid(); }
 function addLog(e){ const entry = Object.assign({id: rid() + rid(), at: now()}, e); S.local.log.unshift(entry); S.local.log = S.local.log.slice(0, 40); S.plog.push(entry); return entry; }
 function afterChange(){ saveLocal(); schedulePush(); renderHitungLists(); if (S.tab === 'rekap') renderRekap(); }
 S.editingLog = null; S.confirmLog = null;
+S.rkSort = 'perhatian'; S.devF = 'semua'; S.devQ = ''; S.devAll = false; S.dmsFilter = 'semua'; S.dmsSort = 'sku';
 S.qLog = {q: '', f: 'semua', sort: 'baru'}; S.qMy = {q: '', f: 'semua', sort: 'baru'}; S.logAll = false;
 
 function addCount(prod, code, q){
@@ -1243,6 +1382,10 @@ function openCard(prod, code, unitHint){
   $('#qIWrap').hidden = !!(prod && prod.k > 0);
   ['#qK', '#qL', '#qP', '#qI'].forEach(s => $(s).value = '');
   if (!(prod && prod.k > 0) && isi > 0) $('#qI').value = isi;
+  if (unitHint === 'k') {
+    if (prod && prod.k > 0) { $('#qK').value = 1; scanMsg('Barcode karton: 1 Karton terisi otomatis. Ubah kalau jumlahnya lain.'); }
+    else scanMsg('Barcode karton, tapi isi per karton belum ada. Isi dulu "Isi per karton".');
+  }
   const it = S.local && S.local.items[S.current.code];
   $('#pcMine').textContent = it ? 'Sudah dihitung device ini: ' + fmtFull(it) + ' (' + fmt(toPcs(it, isi)) + ' pcs)' : '';
   updatePreview();
@@ -1275,7 +1418,7 @@ const Cam = {active: false, stream: null, timer: null, h5: null, last: '', lastA
 const CAM_FORMATS = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'itf', 'qr_code'];
 function camMsg(html){ $('#camMsg').innerHTML = html; }
 async function openCam(){
-  if (!canCount()) return;
+  if (!canCount()) { toast(whyNoCount()); return; }
   $('#camModal').hidden = false; Cam.active = true; Cam.last = '';
   camMsg(S.quickOn ? 'Mode scan terus: tiap barcode langsung ditambah. Tekan <b>Tutup</b> kalau selesai.' : 'Arahkan kamera ke barcode.');
   const video = $('#camVideo');
@@ -1331,21 +1474,23 @@ function renderHeader(){
   $('#hdrSession').textContent = s ? s.name + (s.status === 'closed' ? ' · ditutup' : '') : 'Belum ada sesi';
   const chip = $('#devChip'); chip.classList.toggle('missing', !S.deviceName);
   chip.innerHTML = '<b>' + esc(S.deviceName || 'Atur nama device') + '</b>' + (S.deviceName ? '<span class="dv-pen" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/></svg></span>' : '');
+  chip.dataset.len = S.deviceName.length > 26 ? 'xl' : S.deviceName.length > 15 ? 'l' : '';
   chip.setAttribute('aria-label', S.deviceName ? 'Ganti nama device ' + S.deviceName : 'Atur nama device'); chip.title = S.deviceName ? 'Ketuk untuk ganti nama device' : 'Atur nama device';
   renderSync();
 }
 function renderHitung(){
   const s = curSession(); let html = '';
   if (!S.deviceName) html = `<div class="callout"><span>Beri nama device ini dulu, supaya hitungannya bisa ditandai.</span><button class="btn primary" type="button" data-go="sesi">Atur nama device</button></div>`;
-  else if (!s && MODE === 'hitung') html = `<div class="callout"><span>Belum ada sesi opname yang berjalan. Minta admin membuat sesi, lalu buka ulang halaman ini.</span></div>`;
+  else if (!s && MODE === 'hitung') html = `<div class="callout"><span>Belum ada sesi yang berjalan. Minta admin membuat sesi, lalu ketuk tombol muat ulang di kanan atas.</span></div>`;
   else if (!s) html = `<div class="callout"><span>Belum ada sesi opname. Buat sesi dulu, lalu semua device pilih sesi yang sama.</span><button class="btn primary" type="button" data-go="sesi">Buat sesi</button></div>`;
-  else if (s.status === 'closed') html = `<div class="callout"><span>Sesi <b>${esc(s.name)}</b> sudah ditutup. Buka lagi di tab Sesi untuk menambah hitungan.</span></div>`;
+  else if (s.status === 'closed') html = `<div class="callout"><span><b>${esc(s.name)}</b> sudah ditutup. Buka lagi di tab Sesi untuk menambah hitungan.</span></div>`;
   else if (!S.ready) html = `<div class="callout"><span>Memuat hitungan device ini dari Google Sheet… Perlu online sekali untuk sesi ini.</span></div>`;
   else if (!S.master.items.length) html = `<div class="callout"><span>Data barang belum ada. Scan tetap tercatat, tapi nama barang dan isi karton belum dikenali.</span>${MODE === 'admin' ? '<button class="btn" type="button" data-go="dms">Import stok DMS</button>' : ''}</div>`;
   $('#hitungNotice').innerHTML = html;
   const ok = canCount();
-  ['#scanInput', '#scanBtn', '#camBtn', '#fabCam'].forEach(x => $(x).disabled = !ok);
-  $('#scanInput').placeholder = ok ? 'Barcode / SKU / nama' : 'Belum bisa scan';
+  ['#scanInput', '#scanBtn'].forEach(x => { $(x).disabled = !ok; });
+  ['#camBtn', '#fabCam'].forEach(x => { const b = $(x); b.classList.toggle('off', !ok); b.setAttribute('aria-disabled', String(!ok)); });
+  $('#scanInput').placeholder = ok ? 'Barcode, SKU, nama' : 'Belum bisa scan';
   $('#quickOn').checked = S.quickOn;
   $('#quickUnit').classList.toggle('off', !S.quickOn);
   document.querySelectorAll('#quickUnit button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.u === S.quickUnit)));
@@ -1358,8 +1503,11 @@ function matchQ(q, sku, p){
   const hay = (sku + ' ' + (p ? p.n + ' ' + (p.b || '') + ' ' + (p.bk || '') : '')).toLowerCase();
   return q.toLowerCase().split(/\s+/).filter(Boolean).every(w => hay.includes(w));
 }
+const inFlt = (x, f) => f === 'semua' || (f === 'luar' && x.out) || (f === 'wait' && x.pend) || (f === 'cor' && x.cor);
 function viewRows(rows, st, keep){
-  let r = rows.filter(x => keep(x) || ((st.f === 'semua' || (st.f === 'luar' && x.out) || (st.f === 'wait' && x.pend) || (st.f === 'cor' && x.cor)) && matchQ(st.q, x.sku, x.p)));
+  const base = rows.filter(x => matchQ(st.q, x.sku, x.p));
+  if (st.q && st.f !== 'semua' && !base.some(x => inFlt(x, st.f))) st.f = 'semua';
+  let r = rows.filter(x => keep(x) || (inFlt(x, st.f) && matchQ(st.q, x.sku, x.p)));
   const by = fn => r.slice().sort((x, y) => fn(x, y));
   if (st.sort === 'lama') r = r.slice().reverse();
   else if (st.sort === 'nama') r = by((x, y) => String(x.name).localeCompare(String(y.name), 'id'));
@@ -1368,8 +1516,9 @@ function viewRows(rows, st, keep){
   return r;
 }
 function renderTb(pfx, st, all, shown, unit){
+  const cs = all.filter(x => matchQ(st.q, x.sku, x.p));
   const tb = $('#' + pfx + 'Tb'); tb.hidden = !all.length; if (!all.length) return;
-  const defs = [['semua', 'Semua', all.length], ['luar', 'Di luar DMS', all.filter(x => x.out).length], ['wait', 'Menunggu kirim', all.filter(x => x.pend).length], ['cor', 'Dikoreksi', all.filter(x => x.cor).length]];
+  const defs = [['semua', 'Semua', cs.length], ['luar', 'Di luar DMS', cs.filter(x => x.out).length], ['wait', 'Menunggu kirim', cs.filter(x => x.pend).length], ['cor', 'Dikoreksi', cs.filter(x => x.cor).length]];
   $('#' + pfx + 'Chips').innerHTML = defs.map(([k, l, n]) => '<button type="button" data-f="' + k + '" aria-pressed="' + (st.f === k) + '"' + (n || k === 'semua' ? '' : ' class="z"') + '>' + l + ' <b>' + fmt(n) + '</b></button>').join('');
   $('#' + pfx + 'Clr').hidden = !st.q;
   $('#' + pfx + 'Rst').hidden = !(st.q || st.f !== 'semua' || st.sort !== 'baru');
@@ -1396,9 +1545,9 @@ function renderHitungLists(){
     const nm = esc(p ? p.n : '(tidak ada di DMS)');
     if (S.editingLog === e.id) return `<li class="log-edit">${stIco(e.sku)}<div class="it-i"><div class="sk">${esc(e.sku)}</div><div class="nm">${nm}</div></div><span></span>
         <div class="le-in">
-          <div><label for="le-k">Karton</label><input type="number" id="le-k" inputmode="numeric" min="0" value="${e.k || 0}" ${isi > 0 ? '' : 'disabled'}></div>
-          <div><label for="le-l">Lusin</label><input type="number" id="le-l" inputmode="numeric" min="0" value="${e.l || 0}"></div>
-          <div><label for="le-p">Pcs</label><input type="number" id="le-p" inputmode="numeric" min="0" value="${e.p || 0}"></div></div>
+          <div><label for="le-k">Karton</label><input type="text" id="le-k" inputmode="numeric" maxlength="6" autocomplete="off" value="${e.k || 0}" ${isi > 0 ? '' : 'disabled'}></div>
+          <div><label for="le-l">Lusin</label><input type="text" id="le-l" inputmode="numeric" maxlength="6" autocomplete="off" value="${e.l || 0}"></div>
+          <div><label for="le-p">Pcs</label><input type="text" id="le-p" inputmode="numeric" maxlength="6" autocomplete="off" value="${e.p || 0}"></div></div>
         <div class="le-act"><button class="btn sm primary" type="button" data-lsave="${esc(e.id)}">Simpan</button><button class="btn sm" type="button" data-lcancel="1">Tutup</button></div></li>`;
     if (S.confirmLog === e.id) return `<li class="log-edit">${stIco(e.sku)}<div class="it-i"><div class="sk">${esc(e.sku)}</div><div class="nm">${nm}</div></div><span></span>
         <div class="confirm"><span>Batalkan scan +${esc(fmtFull(e))}?</span><button class="btn sm danger" type="button" data-undoyes="${esc(e.id)}">Ya, batalkan</button><button class="btn sm" type="button" data-lcancel="1">Tidak</button></div></li>`;
@@ -1419,9 +1568,9 @@ function renderHitungLists(){
   const rows = mview.map(({sku, it, p, isi, t, n}) => {
     let extra = '';
     if (S.editing === sku) extra = `<div class="edit">
-        <div><label for="e-k">Karton</label><input type="number" id="e-k" inputmode="numeric" min="0" value="${n.k}" ${isi > 0 ? '' : 'disabled'}></div>
-        <div><label for="e-l">Lusin</label><input type="number" id="e-l" inputmode="numeric" min="0" value="${n.l}"></div>
-        <div><label for="e-p">Pcs</label><input type="number" id="e-p" inputmode="numeric" min="0" value="${n.p}"></div>
+        <div><label for="e-k">Karton</label><input type="text" id="e-k" inputmode="numeric" maxlength="6" autocomplete="off" value="${n.k}" ${isi > 0 ? '' : 'disabled'}></div>
+        <div><label for="e-l">Lusin</label><input type="text" id="e-l" inputmode="numeric" maxlength="6" autocomplete="off" value="${n.l}"></div>
+        <div><label for="e-p">Pcs</label><input type="text" id="e-p" inputmode="numeric" maxlength="6" autocomplete="off" value="${n.p}"></div>
         <button class="btn sm primary" type="button" data-save="${esc(sku)}">Simpan</button>
         <button class="btn sm" type="button" data-cancel="1">Batal</button></div>`;
     else if (S.confirmDel === sku) extra = `<div class="confirm"><span>Hapus semua hitungan ${esc(sku)} dari device ini?</span><button class="btn sm danger" type="button" data-delyes="${esc(sku)}">Ya, hapus</button><button class="btn sm" type="button" data-cancel="1">Batal</button></div>`;
@@ -1432,6 +1581,8 @@ function renderHitungLists(){
   $('#myList').innerHTML = !mrows.length ? '<div class="empty">Belum ada barang yang dihitung dari device ini. Setiap barang yang Anda tambahkan muncul di sini dan bisa dikoreksi.</div>'
     : !rows.length ? '<div class="empty">' + noHit('my', S.qMy) + '</div>' : rows.join('');
   $('#heroDone').textContent = fmt(entries.length);
+  const nOut = mrows.filter(x => x.out).length;
+  $('#heroIn').textContent = fmt(mrows.length - nOut); $('#heroOut').textContent = fmt(nOut);
   $('#heroK').textContent = fmt(sumK); $('#heroL').textContent = fmt(sumL); $('#heroP').textContent = fmt(sumP);
   const nMaster = S.master.items.length;
   const pct = nMaster ? Math.min(100, Math.round(entries.length / nMaster * 100)) : 0;
@@ -1484,6 +1635,27 @@ const STATUS_LABEL = {sesuai: 'Sesuai', kurang: 'Kurang', lebih: 'Lebih', belum:
 const FILTERS = [['semua', 'Semua'], ['selisih', 'Selisih'], ['sesuai', 'Sesuai'], ['belum', 'Belum dihitung'], ['luar', 'Di luar DMS']];
 const ORDER = {kurang: 0, lebih: 0, luar: 1, belum: 2, sesuai: 3};
 
+// satu kartu per barang: angka utama dalam pcs, konversi karton/lusin/pcs di bawahnya, rincian per device dilipat
+const RK_ICON = {
+  sesuai: ['ok', '<path d="M5 12.5l4.5 4.5L19 7.5"/>'],
+  kurang: ['neg', '<path d="M12 5v14M6 13l6 6 6-6"/>'],
+  lebih: ['plus', '<path d="M12 19V5M6 11l6-6 6 6"/>'],
+  belum: ['off', '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'],
+  luar: ['warn', '<path d="M12 4l9 16H3L12 4z"/><path d="M12 10v4M12 17h.01"/>'],
+};
+function rekapCard(r, devs){
+  const [ic, path] = RK_ICON[r.status];
+  const conv = n => esc(fmtFull(klp(n, r.isi)));
+  const sign = r.diff > 0 ? '+' : r.diff < 0 ? '−' : '';
+  const cell = (label, val, sub, cls) => '<div' + (cls ? ' class="' + cls + '"' : '') + '><small>' + label + '</small><b>' + val + '</b><em>' + sub + '</em></div>';
+  const dmsC = r.inDms ? cell('Stok DMS', fmt(r.dms), conv(r.dms)) : cell('Stok DMS', '-', 'tidak ada di DMS');
+  const cntC = r.has ? cell('Total hitung', fmt(r.counted), conv(r.counted)) : cell('Total hitung', '-', 'belum dihitung');
+  const difC = r.inDms && r.has ? cell('Selisih', (r.diff > 0 ? '+' : '') + fmt(r.diff), r.diff ? sign + conv(r.diff) : 'sesuai', r.diff < 0 ? 'neg' : r.diff > 0 ? 'pos' : 'okc') : cell('Selisih', '-', '');
+  const per = devs.filter(d => r.per[d.id] != null);
+  const sub = esc(r.sku) + ' · ' + (r.isi ? 'isi ' + fmt(r.isi) + ' pcs/karton' : 'isi karton belum ada') + (per.length === 1 ? ' · ' + esc(per[0].name) : '');
+  const dv = per.length > 1 ? '<details class="devd"><summary>Per device <span>' + per.length + '</span></summary>' + per.map(d => '<div class="dvr"><span class="n">' + esc(d.name) + '</span><span><b>' + fmt(r.per[d.id]) + '</b> pcs · ' + conv(r.per[d.id]) + '</span></div>').join('') + '</details>' : '';
+  return '<div class="rk"><div class="rk-h"><span class="si ' + ic + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + path + '</svg></span><div class="it-i"><div class="nm">' + esc(r.name) + '</div><div class="sk">' + sub + '</div></div><span class="pill ' + r.status + '">' + STATUS_LABEL[r.status] + '</span></div><div class="rk-s">' + dmsC + cntC + difC + '</div>' + dv + '</div>';
+}
 function renderRekap(){
   const {devs, rows} = computeRecap();
   const c = {sesuai: 0, kurang: 0, lebih: 0, belum: 0, luar: 0}; let minus = 0, plus = 0;
@@ -1491,44 +1663,80 @@ function renderRekap(){
   const dmsN = S.master.items.length; const counted = rows.filter(r => r.has && r.inDms).length;
   const pct = dmsN ? Math.round(counted / dmsN * 100) : 0;
   const rkn = $('#rkNote'); if (rkn) { rkn.hidden = S.online; $('#rkUpdated').textContent = S.remoteAt ? 'Offline. Data semua device per ' + fmtTime(S.remoteAt) + ', perubahan terbaru belum masuk.' : 'Offline. Hanya data device ini yang tampil.'; }
-  $('#tiles').innerHTML = `
-    <div class="tile"><div class="k">Progres</div><div class="v">${pct}%</div><div class="s">${fmt(counted)} dari ${fmt(dmsN)} SKU DMS</div></div>
-    <div class="tile good"><div class="k">Sesuai</div><div class="v">${fmt(c.sesuai)}</div><div class="s">SKU cocok dengan DMS</div></div>
-    <div class="tile bad"><div class="k">Selisih</div><div class="v">${fmt(c.kurang + c.lebih)}</div><div class="s">${fmt(c.kurang)} kurang (${fmt(minus)} pcs) · ${fmt(c.lebih)} lebih (+${fmt(plus)} pcs)</div></div>
-    <div class="tile"><div class="k">Belum dihitung</div><div class="v">${fmt(c.belum)}</div><div class="s">${fmt(c.luar)} SKU di luar DMS</div></div>`;
+  // ringkasan cepat: empat kotak dengan susunan sama (label + persen, jumlah SKU, bar, stok dalam pcs)
+  const sm = {dms: 0, cnt: 0, sesuai: 0, belum: 0, luar: 0};
+  rows.forEach(r => {
+    if (r.inDms) { sm.dms += r.dms; sm.cnt += r.counted; }
+    if (r.status === 'sesuai') sm.sesuai += r.dms;
+    if (r.status === 'belum') sm.belum += r.dms;
+    if (r.status === 'luar') sm.luar += r.counted;
+  });
+  const pc = n => dmsN ? n / dmsN * 100 : 0;
+  const rp = n => Math.round(pc(n)) + '%';
+  const tile = (cls, label, pill, big, unit, bar, foot) => '<div class="tile ' + cls + '"><div class="t-h"><span class="t-k">' + label + '</span><span class="t-p">' + pill + '</span></div><div class="t-v"><b>' + big + '</b><small>' + unit + '</small></div><div class="t-bar">' + bar + '</div><div class="t-f">' + foot + '</div></div>';
+  const seg = (n, k) => '<i class="' + (k || '') + '" style="width:' + pc(n).toFixed(1) + '%"></i>';
+  const sel = c.kurang + c.lebih;
+  $('#tiles').innerHTML =
+    tile('t-prog', 'Dihitung', rp(counted), fmt(counted), 'dari ' + fmt(dmsN) + ' SKU', seg(counted), 'Hitung <b>' + fmt(sm.cnt) + '</b> dari <b>' + fmt(sm.dms) + '</b> pcs stok DMS')
+    + tile('t-ok', 'Sesuai', rp(c.sesuai), fmt(c.sesuai), 'SKU', seg(c.sesuai), '<b>' + fmt(sm.sesuai) + '</b> pcs cocok dengan DMS')
+    + tile('t-sel', 'Selisih', rp(sel), fmt(sel), 'SKU', seg(c.kurang, 'neg') + seg(c.lebih, 'pos'), '<span class="neg">' + fmt(c.kurang) + ' kurang · ' + fmt(minus) + ' pcs</span><br><span class="pos">' + fmt(c.lebih) + ' lebih · +' + fmt(plus) + ' pcs</span>')
+    + tile('t-wait', 'Belum dihitung', rp(c.belum), fmt(c.belum), 'SKU', seg(c.belum), '<b>' + fmt(sm.belum) + '</b> pcs stok belum dihitung' + (c.luar ? '<br><span class="warnt">' + fmt(c.luar) + ' SKU di luar DMS · ' + fmt(sm.luar) + ' pcs</span>' : ''));
 
+  // daftar device: terbaru dulu, ringkasan status berfungsi sebagai filter, hanya 4 teratas kecuali dibuka
   $('#devCnt').textContent = devs.length ? devs.length + ' device' : '';
-  $('#devList').innerHTML = devs.length ? devs.map(d => {
+  const dsAll = devs.map(d => {
     const items = Object.entries(d.items); let t = 0;
     items.forEach(([sku, it]) => { const p = productFor(sku); t += toPcs(it, p ? p.k : 0); });
     const age = d.updatedAt ? Date.now() - new Date(d.updatedAt).getTime() : Infinity;
     // status dari waktu update terakhir yang diterima server (bukan dari sinyal langsung HP)
     const st = d.mine ? (S.online ? 'on' : 'off') : age < 5 * 60000 ? 'on' : age < 15 * 60000 ? 'wait' : 'off';
-    const stTxt = {on: 'Aktif', wait: 'Menunggu', off: 'Tidak aktif'}[st];
+    return {d, n: items.length, t, st, at: d.mine ? Date.now() : (d.updatedAt ? new Date(d.updatedAt).getTime() : 0)};
+  }).sort((x, y) => y.at - x.at);
+  const dq = S.devQ.trim().toLowerCase();
+  const dBase = dq ? dsAll.filter(x => String(x.d.name || '').toLowerCase().includes(dq)) : dsAll;
+  const dCnt = {semua: dBase.length, on: 0, wait: 0, off: 0}; dBase.forEach(x => dCnt[x.st]++);
+  if (dq && S.devF !== 'semua' && !dCnt[S.devF]) S.devF = 'semua';
+  const dView = dBase.filter(x => S.devF === 'semua' || x.st === S.devF);
+  const LIM = 4; const dShown = (!S.devAll && dView.length > LIM) ? dView.slice(0, LIM) : dView;
+  $('#devQWrap').hidden = dsAll.length <= 6; $('#devQClr').hidden = !dq;
+  $('#devChips').hidden = $('#devHint').hidden = !dsAll.length;
+  $('#devChips').innerHTML = [['semua', 'Semua', ''], ['on', 'Aktif', 'on'], ['wait', 'Menunggu', 'wait'], ['off', 'Tidak aktif', 'off']].map(([k, l, c]) => '<button type="button" data-f="' + k + '" aria-pressed="' + (S.devF === k) + '"' + (dCnt[k] || k === 'semua' ? '' : ' class="z"') + '>' + (c ? '<i class="dot ' + c + '"></i>' : '') + l + ' <b>' + fmt(dCnt[k]) + '</b></button>').join('');
+  $('#devMore').hidden = dView.length <= LIM;
+  $('#devMore').textContent = S.devAll ? 'Tampilkan lebih sedikit' : 'Tampilkan semua (' + fmt(dView.length) + ')';
+  const devCard = x => {
+    const d = x.d, st = x.st, stTxt = {on: 'Aktif', wait: 'Menunggu', off: 'Tidak aktif'}[st];
     return `<div class="dev ${st}"><svg class="phone" viewBox="0 0 24 36" aria-hidden="true"><rect class="pb" x="2" y="1" width="20" height="34" rx="4"/><rect class="ps" x="5" y="6" width="14" height="21" rx="1.5"/><circle class="pd" cx="12" cy="31" r="1.4"/></svg>
       <div class="dv-i"><div class="n">${esc(d.name || 'Tanpa nama')} ${d.mine ? '<span class="you">device ini</span>' : ''}</div>
-      <div class="m">${fmt(items.length)} SKU · ${fmt(t)} pcs</div></div>
+      <div class="m">${fmt(x.n)} SKU · ${fmt(x.t)} pcs</div></div>
       <div class="dv-s"><span class="stp"><i></i>${stTxt}</span><span class="m">${esc(ago(d.updatedAt))}${d.updatedAt ? ' · ' + esc(fmtTime(d.updatedAt)) : ''}</span></div></div>`;
-  }).join('') : '<div class="empty">Belum ada device yang menghitung di sesi ini. Salin link penghitung di tab Sesi dan bagikan ke tim gudang.</div>';
+  };
+  $('#devList').innerHTML = !dsAll.length ? '<div class="empty">Belum ada device yang menghitung di sesi ini. Salin link penghitung di tab Sesi dan bagikan ke tim gudang.</div>'
+    : !dShown.length ? '<div class="empty">Tidak ada device yang cocok. <button type="button" class="lnk" id="devReset">Hapus pencarian dan filter</button></div>'
+    : dShown.map(devCard).join('');
 
-  const f = S.rkFilter; const q = norm(S.rkSearch);
-  let list = rows.filter(r => f === 'semua' ? true : f === 'selisih' ? (r.status === 'kurang' || r.status === 'lebih') : r.status === f);
-  if (q) list = list.filter(r => norm(r.sku).includes(q) || norm(r.name).includes(q) || norm(r.b).includes(q));
-  list.sort((a, b) => (ORDER[a.status] - ORDER[b.status]) || (Math.abs(b.diff) - Math.abs(a.diff)) || a.sku.localeCompare(b.sku));
-  const cnt = {semua: rows.length, selisih: c.kurang + c.lebih, sesuai: c.sesuai, belum: c.belum, luar: c.luar};
-  $('#rkFilter').innerHTML = FILTERS.map(([k, l]) => `<button type="button" data-f="${k}" aria-pressed="${f === k}">${l} (${fmt(cnt[k])})</button>`).join('');
+  const q = norm(S.rkSearch);
+  const bySearch = q ? rows.filter(r => norm(r.sku).includes(q) || norm(r.name).includes(q) || norm(r.b).includes(q)) : rows;
+  const inF = (r, k) => k === 'semua' ? true : k === 'selisih' ? (r.status === 'kurang' || r.status === 'lebih') : r.status === k;
+  const cnt = {}; FILTERS.forEach(([k]) => { cnt[k] = bySearch.filter(r => inF(r, k)).length; });
+  if (q && S.rkFilter !== 'semua' && !cnt[S.rkFilter]) S.rkFilter = 'semua';
+  const f = S.rkFilter;
+  const list = bySearch.filter(r => inF(r, f));
+  const absDiff = r => r.inDms && r.has ? Math.abs(r.diff) : -1;
+  const SORT_RK = {
+    perhatian: (x, y) => (ORDER[x.status] - ORDER[y.status]) || (Math.abs(y.diff) - Math.abs(x.diff)) || x.sku.localeCompare(y.sku),
+    selisih: (x, y) => (absDiff(y) - absDiff(x)) || x.sku.localeCompare(y.sku),
+    hitung: (x, y) => (y.counted - x.counted) || x.sku.localeCompare(y.sku),
+    nama: (x, y) => String(x.inDms ? x.name : x.sku).localeCompare(String(y.inDms ? y.name : y.sku), 'id'),
+    sku: (x, y) => x.sku.localeCompare(y.sku, 'id', {numeric: true}),
+  };
+  list.sort(SORT_RK[S.rkSort] || SORT_RK.perhatian);
+  $('#rkSort').value = S.rkSort;
+  $('#rkRst').hidden = !(S.rkSearch.trim() || f !== 'semua' || S.rkSort !== 'perhatian');
+  $('#rkFilter').innerHTML = FILTERS.map(([k, l]) => `<button type="button" data-f="${k}" aria-pressed="${f === k}"${cnt[k] || k === 'semua' ? '' : ' class="z"'}>${l} <b>${fmt(cnt[k])}</b></button>`).join('');
 
   const shown = list.slice(0, S.rkLimit);
-  $('#rkTable').innerHTML = `<thead><tr><th>SKU</th><th>Nama barang</th>${devs.map(d => `<th class="r">${esc(d.name)}</th>`).join('')}<th class="r">Total hitung</th><th class="r">Stok DMS</th><th class="r">Selisih</th><th>Status</th></tr></thead>
-    <tbody>${shown.length ? shown.map(r => `<tr>
-      <td class="mono">${esc(r.sku)}</td>
-      <td class="nm">${esc(r.name)}<span class="sub">${r.isi ? 'Isi ' + fmt(r.isi) + ' pcs/karton' : 'Isi karton belum ada'}</span></td>
-      ${devs.map(d => `<td class="r">${r.per[d.id] != null ? fmt(r.per[d.id]) : '<span class="sub">-</span>'}</td>`).join('')}
-      <td class="r"><b>${fmt(r.counted)}</b><span class="sub">${esc(fmtKLP(klp(r.counted, r.isi)))}</span></td>
-      <td class="r">${r.inDms ? fmt(r.dms) + `<span class="sub">${esc(fmtKLP(klp(r.dms, r.isi)))}</span>` : '<span class="sub">-</span>'}</td>
-      <td class="r ${r.diff < 0 ? 'neg' : r.diff > 0 ? 'pos' : ''}">${r.diff > 0 ? '+' : ''}${fmt(r.diff)}${r.diff ? `<span class="sub">${r.diff < 0 ? '−' : '+'}${esc(fmtKLP(klp(r.diff, r.isi)))}</span>` : ''}</td>
-      <td><span class="pill ${r.status}">${STATUS_LABEL[r.status]}</span></td></tr>`).join('')
-      : `<tr><td colspan="${6 + devs.length}" class="empty">Tidak ada barang dengan status ini. Pilih filter lain atau kosongkan pencarian.</td></tr>`}</tbody>`;
+  $('#rkMeta').textContent = list.length === rows.length ? fmt(rows.length) + ' SKU' : fmt(list.length) + ' dari ' + fmt(rows.length) + ' SKU';
+  $('#rkList').innerHTML = shown.length ? shown.map(r => rekapCard(r, devs)).join('') : '<div class="empty">Tidak ada barang dengan status ini. Pilih filter lain atau kosongkan pencarian.</div>';
   $('#rkMore').hidden = list.length <= S.rkLimit;
   $('#rkMore').textContent = 'Tampilkan lebih banyak (' + fmt(list.length - S.rkLimit) + ' lagi)';
 }
@@ -1627,19 +1835,36 @@ async function readDmsFile(f){
   } catch(e){ S.parsed = {items: [], error: 'File tidak bisa dibaca: ' + e.message}; }
   S.confirmImport = false; renderDmsPreview();
 }
+function importImpact(p){
+  const cur = new Set(S.master.items.map(i => i.s)); const nxt = new Map(p.items.map(i => [i.s, i.k || 0]));
+  const counted = new Set([...(S.local ? Object.keys(S.local.items) : []), ...S.remote.map(r => r[2])]);
+  const lost = [], changed = [];
+  counted.forEach(sku => {
+    if (!cur.has(sku)) return;
+    const old = productFor(sku);
+    if (!nxt.has(sku)) lost.push(sku);
+    else if (old && old.k > 0 && nxt.get(sku) !== old.k) changed.push(sku + ' (' + fmt(old.k) + ' → ' + fmt(nxt.get(sku)) + ')');
+  });
+  return {lost, changed};
+}
 function renderDmsPreview(){
   const box = $('#dmsPreview'); const p = S.parsed;
   if (!p) { box.innerHTML = ''; return; }
   if (p.error) { box.innerHTML = `<div class="prevbox"><div class="neg">${esc(p.error)}</div></div>`; return; }
   const tot = p.items.reduce((a, i) => a + i.q, 0);
+  const imp = importImpact(p); const nImp = imp.lost.length + imp.changed.length;
+  const key = p.fileName + '|' + p.items.length; if (S.impKey !== key) { S.impKey = key; S.impAck = false; }
+  const lst = x => esc(x.slice(0, 5).join(', ')) + (x.length > 5 ? ' dan ' + (x.length - 5) + ' lainnya' : '');
+  const impHtml = nImp ? '<div class="ng-impact"><p>' + (imp.lost.length ? '<b>' + fmt(imp.lost.length) + ' SKU yang sudah dihitung tidak ada di file baru</b> (' + lst(imp.lost) + '). Hitungannya akan terbaca 0 pcs.' : '') + (imp.lost.length && imp.changed.length ? '<br>' : '') + (imp.changed.length ? '<b>' + fmt(imp.changed.length) + ' SKU berubah isi per karton</b> (' + lst(imp.changed) + '). Total pcs hitungan dalam karton ikut berubah.' : '') + '</p></div><label class="ng-ck"><input type="checkbox" id="impAck"' + (S.impAck ? ' checked' : '') + '><span>Saya mengerti</span></label>' : '';
   const warn = [p.skipped ? '<span class="pill luar">' + fmt(p.skipped) + ' baris tanpa SKU dilewati</span>' : '', p.dup ? '<span class="pill luar">' + fmt(p.dup) + ' SKU dobel dijumlahkan</span>' : ''].join('');
   box.innerHTML = `<div class="prevbox">
     <div><b>${fmt(p.items.length)} SKU</b> terbaca dari ${esc(p.fileName)} · total ${fmt(tot)} pcs</div>
     ${warn ? '<div class="prevwarn">' + warn + '</div>' : ''}
+    ${impHtml}
     ${p.noIsi ? `<div class="neg">${fmt(p.noIsi)} SKU tanpa isi_karton, kartonnya terhitung 0 pcs.</div>` : ''}
     ${S.confirmImport
       ? `<div class="confirm"><span>Ganti ${fmt(S.master.items.length)} SKU lama dengan ${fmt(p.items.length)} SKU baru? Hitungan device tetap aman.</span><button class="btn sm danger" type="button" id="impYes">Ya, ganti</button><button class="btn sm" type="button" id="impNo">Batal</button></div>`
-      : `<div class="row"><button class="btn primary" type="button" id="impBtn">Simpan ke Google Sheet</button><button class="btn" type="button" id="impNo">Batal</button></div>`}
+      : `<div class="row"><button class="btn primary" type="button" id="impBtn"${nImp && !S.impAck ? ' disabled' : ''}>Simpan ke Google Sheet</button><button class="btn" type="button" id="impNo">Batal</button></div>`}
   </div>`;
 }
 async function importMaster(){
@@ -1654,6 +1879,17 @@ async function importMaster(){
     toast(netFail(e) ? 'Gagal menyimpan: tidak ada koneksi' : 'Gagal menyimpan: ' + e.message);
   }
 }
+// kartu master barang: isi karton, stok pcs, dan konversinya
+function dmsCard(p){
+  const noIsi = !(p.k > 0);
+  const ic = noIsi ? ['info', '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'] : ['ok', '<path d="M5 12.5l4.5 4.5L19 7.5"/>'];
+  const tag = noIsi ? '<span class="pill luar">Isi kosong</span>' : !(p.q > 0) ? '<span class="pill belum">Stok 0</span>' : '<span></span>';
+  const sub = esc(p.s) + (p.b ? ' · ' + esc(p.b) : '') + (p.bk ? ' · ctn ' + esc(p.bk) : '');
+  const cell = (label, val, s) => '<div><small>' + label + '</small><b>' + val + '</b><em>' + s + '</em></div>';
+  return '<div class="rk"><div class="rk-h"><span class="si ' + ic[0] + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + ic[1] + '</svg></span><div class="it-i"><div class="nm">' + esc(p.n) + '</div><div class="sk">' + sub + '</div></div>' + tag + '</div><div class="rk-s two">'
+    + cell('Isi karton', noIsi ? '-' : fmt(p.k), noIsi ? 'belum ada' : 'pcs/karton')
+    + cell('Stok DMS', fmt(p.q || 0), (p.q > 0 ? esc(fmtFull(klp(p.q, p.k))) : 'pcs')) + '</div></div>';
+}
 function renderDms(){
   const m = S.master.meta;
   const mi = (ic, label, val, cls) => '<div class="mi3' + (cls ? ' ' + cls : '') + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + ic + '</svg><span><small>' + label + '</small><b>' + val + '</b></span></div>';
@@ -1661,13 +1897,25 @@ function renderDms(){
     ? mi('<path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5"/>', 'Data', fmt(S.master.items.length) + ' SKU') + mi('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', 'Diperbarui', m && m.importedAt ? esc(fmtDate(m.importedAt)) : '-') + (m && m.fileName ? mi('<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5zM14 3v5h5"/>', 'File', esc(m.fileName), 'wide') : '')
     : '<div class="empty">Belum ada data stok DMS. Unggah file untuk mulai.</div>';
   const q = norm(S.dmsSearch);
-  let list = S.master.items;
-  if (q) list = list.filter(p => norm(p.s).includes(q) || norm(p.n).includes(q) || norm(p.b).includes(q) || norm(p.bk).includes(q));
-  $('#dmsCnt').textContent = fmt(S.master.items.length) + ' SKU';
+  const all = S.master.items;
+  const bySearch = q ? all.filter(p => norm(p.s).includes(q) || norm(p.n).includes(q) || norm(p.b).includes(q) || norm(p.bk).includes(q)) : all;
+  const inD = (p, k) => k === 'semua' || (k === 'isi' && !(p.k > 0)) || (k === 'nol' && !(p.q > 0));
+  const DF = [['semua', 'Semua'], ['isi', 'Isi karton kosong'], ['nol', 'Stok kosong']];
+  const cnt = {}; DF.forEach(([k]) => { cnt[k] = bySearch.filter(p => inD(p, k)).length; });
+  if (q && S.dmsFilter !== 'semua' && !cnt[S.dmsFilter]) S.dmsFilter = 'semua';
+  const f = S.dmsFilter;
+  const list = bySearch.filter(p => inD(p, f));
+  const numSku = (x, y) => String(x.s).localeCompare(String(y.s), 'id', {numeric: true});
+  const SORT = {sku: numSku, nama: (x, y) => String(x.n).localeCompare(String(y.n), 'id'), stok: (x, y) => ((y.q || 0) - (x.q || 0)) || numSku(x, y)};
+  list.sort(SORT[S.dmsSort] || numSku);
+  $('#dmsCnt').textContent = fmt(all.length) + ' SKU';
+  $('#dmsChips').innerHTML = DF.map(([k, l]) => '<button type="button" data-f="' + k + '" aria-pressed="' + (f === k) + '"' + (cnt[k] || k === 'semua' ? '' : ' class="z"') + '>' + l + ' <b>' + fmt(cnt[k]) + '</b></button>').join('');
+  $('#dmsSort').value = S.dmsSort;
+  $('#dmsRst').hidden = !(S.dmsSearch.trim() || f !== 'semua' || S.dmsSort !== 'sku');
+  $('#dmsCntMeta').textContent = list.length === all.length ? fmt(all.length) + ' SKU' : fmt(list.length) + ' dari ' + fmt(all.length) + ' SKU';
   const shown = list.slice(0, S.dmsLimit);
-  $('#dmsTable').innerHTML = `<thead><tr><th>SKU</th><th>Barcode</th><th>Nama barang</th><th class="r">Isi karton</th><th class="r">Stok (pcs)</th><th class="r">Karton · Lusin · Pcs</th></tr></thead><tbody>${
-    shown.length ? shown.map(p => `<tr><td class="mono">${esc(p.s)}</td><td class="mono">${esc(p.b || '-')}${p.bk ? `<span class="sub">ctn ${esc(p.bk)}</span>` : ''}</td><td class="nm">${esc(p.n)}</td><td class="r">${p.k ? fmt(p.k) : '-'}</td><td class="r">${fmt(p.q)}</td><td class="r">${esc(fmtKLP(klp(p.q, p.k)))}</td></tr>`).join('')
-    : `<tr><td colspan="6" class="empty">${S.master.items.length ? 'Tidak ada barang yang cocok dengan pencarian.' : 'Import file dari DMS untuk mulai.'}</td></tr>`}</tbody>`;
+  $('#dmsList').innerHTML = shown.length ? shown.map(dmsCard).join('') : '<div class="empty">' + (all.length ? 'Tidak ada barang yang cocok. Hapus pencarian atau filter.' : 'Unggah file dari DMS untuk mulai.') + '</div>';
+  $('#dmsMore').textContent = 'Tampilkan lebih banyak (' + fmt(Math.max(0, list.length - S.dmsLimit)) + ' lagi)';
   $('#dmsMore').hidden = list.length <= S.dmsLimit;
 }
 
@@ -1862,12 +2110,16 @@ on('#dmsPreview', 'click', e => {
   else if (e.target.id === 'impYes') importMaster();
   else if (e.target.id === 'impNo') { if (S.confirmImport) S.confirmImport = false; else S.parsed = null; renderDmsPreview(); }
 });
+on('#dmsPreview', 'change', e => { if (e.target.id === 'impAck') { S.impAck = e.target.checked; renderDmsPreview(); } });
 on('#dmsReload', 'click', () => syncMaster(null, true));
 on('#tplBtn', 'click', () => saveXlsx('template-stok-dms.xlsx', [['Master_DMS', [
   ['sku', 'barcode', 'barcode_karton', 'nama', 'isi_karton', 'stok_karton', 'stok_lusin', 'stok_pcs'],
   ['BRG-001', '8991234567001', '18991234567001', 'Contoh Barang A 250ml', 48, 25, 0, 0],
   ['BRG-002', '8991234567002', '', 'Contoh Barang B 1kg', 12, 25, 1, 0]], [12, 16, 16, 30, 10, 12, 12, 10]]]));
 on('#dmsSearch', 'input', e => { S.dmsSearch = e.target.value; S.dmsLimit = 200; renderDms(); });
+on('#dmsChips', 'click', e => { const b = e.target.closest('button[data-f]'); if (!b) return; S.dmsFilter = b.dataset.f; S.dmsLimit = 200; renderDms(); });
+on('#dmsSort', 'change', e => { S.dmsSort = e.target.value; S.dmsLimit = 200; renderDms(); });
+on('#dmsRst', 'click', () => { S.dmsFilter = 'semua'; S.dmsSearch = ''; S.dmsSort = 'sku'; S.dmsLimit = 200; $('#dmsSearch').value = ''; renderDms(); });
 on('#dmsMore', 'click', () => { S.dmsLimit += 300; renderDms(); });
 
 function saveDeviceName(){
@@ -1915,12 +2167,37 @@ function wireTb(pfx, st){
   on('#' + pfx + 'Sort', 'change', e => { st.sort = e.target.value; renderHitungLists(); });
 }
 wireTb('log', S.qLog); wireTb('my', S.qMy);
+on('#rkRst', 'click', () => { S.rkFilter = 'semua'; S.rkSearch = ''; S.rkSort = 'perhatian'; S.rkLimit = 200; $('#rkSearch').value = ''; renderRekap(); });
+on('#rkSort', 'change', e => { S.rkSort = e.target.value; S.rkLimit = 200; renderRekap(); });
+on('#devChips', 'click', e => { const b = e.target.closest('button[data-f]'); if (!b) return; S.devF = b.dataset.f; S.devAll = false; renderRekap(); });
+on('#devQ', 'input', e => { S.devQ = e.target.value; S.devAll = false; renderRekap(); });
+on('#devQClr', 'click', () => { S.devQ = ''; $('#devQ').value = ''; renderRekap(); $('#devQ').focus(); });
+on('#devMore', 'click', () => { S.devAll = !S.devAll; renderRekap(); });
+on('#devList', 'click', e => { if (e.target.id === 'devReset') { S.devQ = ''; S.devF = 'semua'; $('#devQ').value = ''; renderRekap(); } });
 on('#logMore', 'click', () => { S.logAll = true; renderHitungLists(); });
 document.addEventListener('click', e => {
   const r = e.target.closest('[data-reset]'); if (!r) return;
   const pfx = r.dataset.reset, st = pfx === 'log' ? S.qLog : S.qMy;
   st.q = ''; st.f = 'semua'; st.sort = 'baru'; $('#' + pfx + 'Q').value = ''; if (pfx === 'log') S.logAll = false; renderHitungLists();
 });
+// isian jumlah: hanya angka bulat, tanpa minus, maksimal 6 digit
+let numTs = 0;
+function numToast(msg){ if (Date.now() - numTs > 1500) { numTs = Date.now(); toast(msg); } }
+document.addEventListener('input', e => {
+  const t = e.target; if (!t.matches || !t.matches('#qK,#qL,#qP,#qI,#le-k,#le-l,#le-p,#e-k,#e-l,#e-p')) return;
+  const v = t.value; let c = v, msg = '';
+  if (c.includes('-')) { c = ''; msg = 'Jumlah tidak boleh minus'; }
+  else {
+    c = c.replace(/[^\d.,]/g, '');
+    const m = c.match(/^(\d*)([.,]?)(\d*)/); let whole = (m[1] || '');
+    if (m[3]) { c = whole; msg = 'Isi dengan angka bulat saja'; }       // desimal dibuang, bukan digabung
+    else c = whole + m[2];                                           // titik di ujung dibiarkan dulu, dibuang saat selesai
+    if (whole.length > 6) { c = whole.slice(0, 6); msg = 'Maksimal 999.999'; }
+    if (c !== v && !msg && /[^\d.,]/.test(v)) msg = 'Isi dengan angka bulat saja';
+  }
+  if (c !== v) { t.value = c; if (msg) numToast(msg); }
+}, true);
+document.addEventListener('change', e => { const t = e.target; if (t.matches && t.matches('#qK,#qL,#qP,#qI,#le-k,#le-l,#le-p,#e-k,#e-l,#e-p')) t.value = t.value.replace(/[.,]/g, ''); }, true);
 on('#logoutBtn', 'click', () => logout(false));
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && Cam.active) closeCam(); });
 
@@ -1932,17 +2209,43 @@ if (S.code) { $('#codeInput').value = S.code; showApp(); login(S.code, true); }
 else $('#codeInput').focus();
 
 /* ================= tombol kembali ================= */
-// Tombol kembali minta konfirmasi dulu, supaya tidak keluar tanpa sengaja dan login ulang.
-// Entri riwayat penjaga dipasang lagi di tiap sentuhan, karena Chrome melewati entri yang
-// ditambahkan tanpa interaksi pengguna.
+// Tombol kembali tidak langsung keluar: modal yang sedang terbuka ditutup dulu, kalau tidak ada
+// muncul dialog konfirmasi. Entri riwayat penjaga dipasang lagi di tiap sentuhan, karena Chrome
+// melewati entri yang ditambahkan tanpa interaksi pengguna.
 let leaving = false;
 function ensureBackGuard(){ if (!(history.state && history.state.so)) history.pushState({so: 1}, ''); }
 ensureBackGuard();
 document.addEventListener('pointerdown', ensureBackGuard, {passive: true});
+
+// ada isian yang belum disimpan? (jumlah di form produk, koreksi, atau nama device yang sedang diubah)
+function unsavedForm(){
+  const qty = S.current && (+$('#qK').value || +$('#qL').value || +$('#qP').value);
+  const name = S.nameEditing && S.deviceName && $('#devName').value.trim().toUpperCase() !== S.deviceName;
+  return !!(qty || S.editing || S.editingLog || name);
+}
+function openLeaveGate(){
+  const ok = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  $('#lgText').innerHTML = '<div class="ng-rule">' + ok + '<span>Hitungan yang sudah ditambahkan <b>tetap aman</b> di HP dan terkirim saat online.</span></div>'
+    + (unsavedForm() ? '<div class="ng-impact"><p>Isian di form yang <b>belum disimpan</b> akan hilang.</p></div>' : '');
+  $('#leaveGate').hidden = false; setTimeout(() => $('#lgNo').focus(), 0);
+}
+function closeLeaveGate(){ $('#leaveGate').hidden = true; }
+on('#lgNo', 'click', closeLeaveGate);
+on('#leaveGate', 'click', e => { if (e.target.id === 'leaveGate') closeLeaveGate(); });
+on('#lgYes', 'click', () => { closeLeaveGate(); leaving = true; history.go(-2); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#leaveGate').hidden) closeLeaveGate(); });
 window.addEventListener('popstate', () => {
   if (leaving) return;
-  if (confirm('Keluar dari halaman ini?\nHitungan yang belum terkirim tetap tersimpan di device ini.')) { leaving = true; history.back(); }
-  else ensureBackGuard();
+  ensureBackGuard(); // tetap di halaman ini sampai user memilih keluar
+  if (!$('#leaveGate').hidden) return;
+  if (!$('#camModal').hidden) { closeCam(); return; }
+  if (!$('#nameGate').hidden) { closeNameGate(); return; }
+  openLeaveGate();
+});
+// refresh atau tutup tab: peringatkan kalau ada hitungan belum terkirim atau isian belum disimpan
+window.addEventListener('beforeunload', e => {
+  if (leaving) return;
+  if (Object.keys(S.dirty).length || unsavedForm()) { e.preventDefault(); e.returnValue = ''; }
 });
 })();
 

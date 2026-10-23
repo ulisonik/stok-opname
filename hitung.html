@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=45">
+<link rel="stylesheet" href="assets/style.css?v=63">
 </head>
 <body data-mode="hitung">
 
@@ -71,7 +71,7 @@
         <div class="scanrow">
           <div class="scanbox">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6v12M7.5 6v12M11 6v12M14.5 6v12M18 6v12M21 6v12"/></svg>
-            <input type="text" id="scanInput" aria-label="Scan atau ketik barcode, kode SKU, atau nama barang" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="search" placeholder="Barcode / SKU / nama">
+            <input type="text" id="scanInput" aria-label="Scan atau ketik barcode, kode SKU, atau nama barang" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="search" placeholder="Barcode, SKU, nama">
             <button class="go" id="scanBtn" type="button" aria-label="Cari" title="Cari"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></button>
           </div>
           <button class="camfab" id="camBtn" type="button" aria-label="Scan pakai kamera" title="Scan pakai kamera"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
@@ -99,14 +99,14 @@
         </div>
         <div class="q-isi" id="qIWrap" hidden>
           <div class="qi-h"><label for="qI">Isi per karton (pcs)</label><span class="opt">Opsional</span><span class="reqchip">Wajib <i>*</i></span></div>
-          <input type="number" id="qI" inputmode="numeric" min="1" placeholder="mis. 12">
+          <input type="text" id="qI" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="mis. 12">
           <small>Isi kalau Anda tahu, supaya pcs otomatis menjadi karton dan diingat untuk barang ini. Wajib diisi kalau Anda mengisi Karton.</small>
         </div>
         <div class="qty-h">Jumlah <span class="req">*</span><small>isi minimal satu</small></div>
         <div class="qty">
-          <div class="q"><label for="qK">Karton</label><input type="number" id="qK" inputmode="numeric" min="0" placeholder="0"><small id="qKh">isi belum ada</small></div>
-          <div class="q"><label for="qL">Lusin</label><input type="number" id="qL" inputmode="numeric" min="0" placeholder="0"><small>12 pcs</small></div>
-          <div class="q"><label for="qP">Pcs</label><input type="number" id="qP" inputmode="numeric" min="0" placeholder="0"><small>satuan</small></div>
+          <div class="q"><label for="qK">Karton</label><input type="text" id="qK" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="0"><small id="qKh">isi belum ada</small></div>
+          <div class="q"><label for="qL">Lusin</label><input type="text" id="qL" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="0"><small>12 pcs</small></div>
+          <div class="q"><label for="qP">Pcs</label><input type="text" id="qP" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="0"><small>satuan</small></div>
         </div>
         <div class="prod-f">
           <span class="preview" id="pcPreview"></span>
@@ -137,6 +137,10 @@
           <div><b id="heroP">0</b><span>Pcs</span></div>
         </div>
         <div id="statCard" hidden>
+          <div class="dms-row">
+            <div class="d"><span class="si ok" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span><b id="heroIn">0</b> SKU ada di DMS</span></div>
+            <div class="d"><span class="si warn" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l9 16H3L12 4z"/><path d="M12 10v4M12 17h.01"/></svg></span><span><b id="heroOut">0</b> SKU di luar DMS</span></div>
+          </div>
           <div class="bar"><i id="statBar"></i></div>
           <div class="bar-meta"><span>Belum dihitung <b id="statLeft">0</b> SKU</span><b class="pct" id="statPct">0%</b></div>
         </div>
@@ -190,6 +194,14 @@
   </div>
 </div>
 
+<div class="modal" id="leaveGate" hidden role="dialog" aria-modal="true" aria-labelledby="lgTitle">
+  <div class="modal-box">
+    <div class="ng-h"><span class="si warn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l9 16H3L12 4z"/><path d="M12 10v4M12 17h.01"/></svg></span><b id="lgTitle">Keluar dari halaman?</b></div>
+    <div class="ng-body" id="lgText"></div>
+    <div class="ng-act"><button class="btn danger" id="lgYes" type="button">Keluar</button><button class="btn primary" id="lgNo" type="button">Tetap di sini</button></div>
+  </div>
+</div>
+
 <div class="modal" id="nameGate" hidden role="dialog" aria-modal="true" aria-labelledby="ngTitle">
   <div class="modal-box">
     <div class="ng-h"><span class="si warn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l9 16H3L12 4z"/><path d="M12 10v4M12 17h.01"/></svg></span><b id="ngTitle">Ganti nama device?</b></div>
@@ -202,6 +214,6 @@
 <div class="toast" id="toast" hidden></div>
 
 <script src="assets/config.js?v=5"></script>
-<script src="assets/app.js?v=45"></script>
+<script src="assets/app.js?v=63"></script>
 </body>
 </html>
