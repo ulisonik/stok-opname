@@ -84,6 +84,11 @@
             <button type="button" data-u="l" aria-pressed="false">+1 Lusin</button>
             <button type="button" data-u="k" aria-pressed="false">+1 Karton</button>
           </div>
+          <div class="cond-seg off" id="quickCond" role="group" aria-label="Kondisi stok scan cepat">
+            <button type="button" data-c="g" aria-pressed="false"><b>Stok Baik</b><small>Good Stock</small></button>
+            <button type="button" data-c="b" aria-pressed="false"><b>Stok Rusak</b><small>Bad Stock</small></button>
+          </div>
+          <div class="cond-hint off" id="quickCondHint">Pilih kondisi stok dulu. Tanpa pilihan, scan akan membuka kartu barang.</div>
         </div>
         <div class="suggest" id="suggest" hidden></div>
         <div class="scanmsg" id="scanMsg" hidden></div>
@@ -102,6 +107,11 @@
           <div class="qi-h"><label for="qI">Isi per karton (pcs)</label><span class="opt">Opsional</span><span class="reqchip">Wajib <i>*</i></span></div>
           <input type="text" id="qI" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="mis. 12">
           <small>Isi kalau Anda tahu, supaya pcs otomatis menjadi karton dan diingat untuk barang ini. Wajib diisi kalau Anda mengisi Karton.</small>
+        </div>
+        <div class="qty-h">Kondisi stok <span class="req">*</span><small>wajib dipilih</small></div>
+        <div class="cond-seg" id="condSeg" role="group" aria-label="Kondisi stok">
+          <button type="button" data-c="g" aria-pressed="false"><b>Stok Baik</b><small>Good Stock</small></button>
+          <button type="button" data-c="b" aria-pressed="false"><b>Stok Rusak</b><small>Bad Stock</small></button>
         </div>
         <div class="qty-h">Jumlah <span class="req">*</span><small>isi minimal satu</small></div>
         <div class="qty">

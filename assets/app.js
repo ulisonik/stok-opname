@@ -53,7 +53,15 @@ const IB = {
   del:  (attr, label) => `<button class="ib ib-del" type="button" ${attr} aria-label="${label}" title="${label}"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>`,
 };
 // isi per karton: dari DMS kalau ada, kalau tidak dari isian user yang diingat per barang
+// Kondisi stok: Good Stock = kunci SKU polos, Bad Stock = kunci "SKU#B" (server menyimpannya di kolom kondisi)
+const BAD = '#B';
+const isBad = key => String(key).endsWith(BAD);
+const baseSku = key => isBad(key) ? String(key).slice(0, -BAD.length) : String(key);
+const keyOf = (sku, bad) => bad ? sku + BAD : sku;
+const condBadge = key => isBad(key) ? '<span class="cond-bad">Bad Stock</span>' : '';
+const skuHtml = key => esc(baseSku(key)) + condBadge(key);
 function isiOf(sku){
+  sku = baseSku(sku);
   const p = productFor(sku); if (p && p.k > 0) return p.k;
   const c = S.local && S.local.isi && S.local.isi[sku]; return c > 0 ? c : 0;
 }
@@ -101,7 +109,7 @@ const S = {
   remote: [], remoteAt: null, remoteSid: null,        // baris Hitung semua device
   online: navigator.onLine, pushing: false, blocked: {},
   tab: 'hitung', current: null,
-  quickOn: LS.get('so-quick') === '1', quickUnit: LS.get('so-quick-unit') || 'p',
+  quickOn: LS.get('so-quick') === '1', quickUnit: LS.get('so-quick-unit') || 'p', quickCond: null,
   rkFilter: 'semua', rkSearch: '', rkLimit: 200, dmsSearch: '', dmsLimit: 200,
   editing: null, confirmDel: null, confirmSess: null, parsed: null, confirmImport: false
 };
@@ -181,9 +189,15 @@ function showApp(){
 function setMaster(meta, items){
   S.master = {meta, items}; S.bySku = new Map(); S.byCode = new Map();
   for (const p of items) {
-    S.bySku.set(p.s, p); S.byCode.set(norm(p.s), {p, u: null});
-    if (p.b) S.byCode.set(norm(p.b), {p, u: 'p'});
-    if (p.bk) S.byCode.set(norm(p.bk), {p, u: 'k'});
+    S.bySku.set(p.s, p);
+    const add = (code, u) => {
+      const c = norm(code), arr = S.byCode.get(c);
+      if (!arr) S.byCode.set(c, [{p, u}]);
+      else { const h = arr.find(x => x.p === p); if (!h) arr.push({p, u}); else if (u === 'k') h.u = 'k'; }
+    };
+    add(p.s, null);
+    if (p.b) add(p.b, 'p');
+    if (p.bk) add(p.bk, 'k');
   }
 }
 async function syncMaster(meta, force){
@@ -199,7 +213,7 @@ async function syncMaster(meta, force){
     if (force) toast('Stok DMS diambil ulang: ' + fmt(items.length) + ' SKU');
   } catch(e){ if (cached) setMaster(cached.meta, cached.items); if (force) toast('Gagal mengambil stok DMS'); renderAll(); }
 }
-function productFor(sku){ return S.bySku.get(sku) || null; }
+function productFor(sku){ return S.bySku.get(baseSku(sku)) || null; }
 
 /* ================= sesi & data device ================= */
 function curSession(){ return S.sessions.find(s => s.id === S.sessionId) || null; }
@@ -284,7 +298,7 @@ async function pushSession(sid){
   const plog = live ? S.plog : (LS.json('so-plog-' + sid) || []);
   const sent = Object.assign({}, dirty);
   const logs = plog.slice(0, 300);
-  const items = Object.keys(sent).map(sku => { const it = local.items[sku] || {}; const w = wireItem(sku, it, (local.isi || {})[sku]); return {sku, k: w.k, l: w.l, p: w.p, at: it.at || now()}; });
+  const items = Object.keys(sent).map(sku => { const it = local.items[sku] || {}; const w = wireItem(sku, it, (local.isi || {})[baseSku(sku)]); return {sku, k: w.k, l: w.l, p: w.p, at: it.at || now()}; });
   try {
     await API.post({action: 'push', sesi: sid, device_id: S.deviceId, device_nama: S.deviceName || 'Tanpa nama', items, log: logs});
     S.online = true; S.pushErr = null;
@@ -340,17 +354,19 @@ S.editingLog = null; S.confirmLog = null;
 S.rkSort = 'perhatian'; S.devF = 'semua'; S.devQ = ''; S.devAll = false; S.dmsFilter = 'semua'; S.dmsSort = 'sku';
 S.qLog = {q: '', f: 'semua', sort: 'baru'}; S.qMy = {q: '', f: 'semua', sort: 'baru'}; S.logAll = false;
 
-function addCount(prod, code, q){
+function addCount(prod, code, q, cond){
   if (!canCount()) return false;
+  if (cond !== 'g' && cond !== 'b') { toast('Pilih Good Stock atau Bad Stock dulu'); return false; }
   const known = !!(prod && prod.k > 0);
-  const sku = prod ? prod.s : code;
+  const bsku = prod ? prod.s : code;
+  const sku = keyOf(bsku, cond === 'b');
   const ik = Math.max(0, q.ik|0);
   const oldIsi = isiOf(sku);
   const isi = known ? prod.k : (ik || oldIsi);
   const raw = {k: Math.max(0, q.k|0), l: Math.max(0, q.l|0), p: Math.max(0, q.p|0)};
   if (!raw.k && !raw.l && !raw.p) { toast('Isi jumlah dulu'); return false; }
   if (raw.k && !isi) { toast('Isi per karton wajib diisi kalau mengisi Karton'); return false; }
-  if (!known && ik) S.local.isi = Object.assign(S.local.isi || {}, {[sku]: ik});
+  if (!known && ik) S.local.isi = Object.assign(S.local.isi || {}, {[bsku]: ik});
   const {k, l, p} = normQ(raw, isi);
   const it = S.local.items[sku] || {k: 0, l: 0, p: 0};
   const base = toPcs(it, known ? isi : oldIsi);
@@ -358,7 +374,7 @@ function addCount(prod, code, q){
   S.local.items[sku] = it; markDirty(sku);
   addLog({sku, k, l, p, aksi: 'tambah'});
   afterChange();
-  toast('+ ' + fmtFull({k, l, p}) + ' → ' + sku);
+  toast('+ ' + fmtFull({k, l, p}) + ' → ' + bsku + (cond === 'b' ? ' (Bad Stock)' : ''));
   return true;
 }
 function undoLog(id){
@@ -386,7 +402,7 @@ function editLog(id, q){
 }
 
 /* ================= scan ================= */
-function lookup(code){ const c = norm(code); return c ? (S.byCode.get(c) || null) : null; }
+function lookup(code){ const c = norm(code); return c ? (S.byCode.get(c) || []) : []; }
 function suggestions(q){
   const c = norm(q); if (c.length < 2) return [];
   const out = [];
@@ -395,10 +411,18 @@ function suggestions(q){
   }
   return out;
 }
-function renderSuggest(list){
+// Penanda stok DMS di daftar pilihan: ikon saja untuk penghitung, ikon + jumlah untuk admin.
+function stockIcon(p){
+  if (p.a == null) return '';
+  return p.a
+    ? '<span class="sg-st on" title="Ada stok di DMS" aria-label="Ada stok di DMS"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg></span>'
+    : '<span class="sg-st" title="Stok DMS kosong" aria-label="Stok DMS kosong"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg></span>';
+}
+function stockTag(p){ return MODE === 'admin' && p.a != null ? '<small>Stok DMS: ' + (p.q > 0 ? esc(fmtFull(klp(p.q, p.k))) : 'kosong') + '</small>' : ''; }
+function renderSuggest(list, units){
   const box = $('#suggest');
   if (!list.length) { box.hidden = true; box.innerHTML = ''; return; }
-  box.innerHTML = list.map(p => `<button type="button" data-sku="${esc(p.s)}"><span class="mono">${esc(p.s)}</span><span>${esc(p.n)}</span></button>`).join('');
+  box.innerHTML = list.map((p, i) => `<button type="button" data-sku="${esc(p.s)}"${units && units[i] ? ' data-u="' + units[i] + '"' : ''}><span class="mono">${esc(p.s)}</span><span class="sg-n">${esc(p.n)}${stockTag(p)}</span>${stockIcon(p)}</button>`).join('');
   box.hidden = false;
 }
 function scanMsg(msg){ const m = $('#scanMsg'); m.textContent = msg || ''; m.hidden = !msg; }
@@ -407,14 +431,22 @@ function scanMsg(msg){ const m = $('#scanMsg'); m.textContent = msg || ''; m.hid
 function handleCode(code, fromCam){
   code = String(code || '').trim(); if (!code) return '';
   renderSuggest([]); scanMsg('');
-  const hit = lookup(code);
+  const hits = lookup(code);
+  if (hits.length > 1) {
+    if (fromCam) closeCam();
+    $('#scanInput').value = code;
+    renderSuggest(hits.map(h => h.p), hits.map(h => h.u));
+    scanMsg('Kode ini dipakai ' + hits.length + ' SKU. Pilih salah satu.' + (hits.some(h => h.p.a != null) ? ' Ikon centang hijau = ada stok di DMS.' : ''));
+    return '';
+  }
+  const hit = hits[0];
   if (hit) {
-    if (S.quickOn && canCount()) {
+    if (S.quickOn && canCount() && S.quickCond) {
       const unit = hit.u === 'k' ? 'k' : S.quickUnit;
       if (unit === 'k' && !(hit.p.k > 0)) { if (fromCam) closeCam(); openCard(hit.p, code); scanMsg('Isi karton belum ada di data DMS. Masukkan lusin/pcs.'); return 'Isi karton kosong'; }
-      addCount(hit.p, code, {[unit]: 1}); closeCard();
-      const it = S.local.items[hit.p.s];
-      return '<b>+1 ' + ({k:'karton', l:'lusin', p:'pcs'})[unit] + '</b> ' + esc(hit.p.n) + ' · total device ini ' + esc(fmtFull(it));
+      addCount(hit.p, code, {[unit]: 1}, S.quickCond); closeCard();
+      const it = S.local.items[keyOf(hit.p.s, S.quickCond === 'b')];
+      return '<b>+1 ' + ({k:'karton', l:'lusin', p:'pcs'})[unit] + (S.quickCond === 'b' ? ' Bad Stock' : ' Good Stock') + '</b> ' + esc(hit.p.n) + ' · total device ini ' + esc(fmtFull(it));
     }
     if (fromCam) closeCam();
     openCard(hit.p, code, hit.u); return '';
@@ -430,7 +462,8 @@ function handleCode(code, fromCam){
 function handleScan(){ const inp = $('#scanInput'); const v = inp.value; inp.value = ''; handleCode(v, false); if (S.quickOn) inp.focus(); }
 
 function openCard(prod, code, unitHint){
-  S.current = {prod, code: prod ? prod.s : norm(code)};
+  S.current = {prod, code: prod ? prod.s : norm(code), cond: null};
+  document.querySelectorAll('#condSeg button').forEach(b => b.setAttribute('aria-pressed', 'false'));
   $('#prodCard').hidden = false;
   $('#pcSku').textContent = prod ? prod.s + (prod.b ? '  ·  ' + prod.b : '') : norm(code);
   $('#pcName').innerHTML = prod ? esc(prod.n) : '<span class="unknown-tag">Tidak ada di DMS</span>';
@@ -444,11 +477,18 @@ function openCard(prod, code, unitHint){
     if (prod && prod.k > 0) { $('#qK').value = 1; scanMsg('Barcode karton: 1 Karton terisi otomatis. Ubah kalau jumlahnya lain.'); }
     else scanMsg('Barcode karton, tapi isi per karton belum ada. Isi dulu "Isi per karton".');
   }
-  const it = S.local && S.local.items[S.current.code];
-  $('#pcMine').textContent = it ? 'Sudah dihitung device ini: ' + fmtFull(it) + ' (' + fmt(toPcs(it, isi)) + ' pcs)' : '';
+  $('#pcMine').textContent = mineText(isi);
   updatePreview();
   const first = '#qK';
   setTimeout(() => { $(first).focus(); $('#prodCard').scrollIntoView({block: 'nearest', behavior: 'smooth'}); }, 0);
+}
+function mineText(isi){
+  const c = S.current.code, parts = [];
+  [['g', 'Good Stock'], ['b', 'Bad Stock']].forEach(([cd, lb]) => {
+    const it = S.local && S.local.items[keyOf(c, cd === 'b')];
+    if (it) parts.push(lb + ': ' + fmtFull(it) + ' (' + fmt(toPcs(it, isi)) + ' pcs)');
+  });
+  return parts.length ? 'Sudah dihitung device ini · ' + parts.join(' · ') : '';
 }
 function closeCard(){ S.current = null; const c = $('#prodCard'); if (c) c.hidden = true; }
 function readQty(){ return {k: +$('#qK').value || 0, l: +$('#qL').value || 0, p: +$('#qP').value || 0, ik: +$('#qI').value || 0}; }
@@ -464,16 +504,17 @@ function updatePreview(){
   if (need) { pv.innerHTML = '<span class="neg">Isi per karton wajib diisi kalau mengisi Karton</span>'; }
   else if (!t) { pv.textContent = 'Masukkan jumlah'; }
   else { const n = normQ(q, isi); pv.innerHTML = 'Tercatat <b>' + esc(fmtFull(n)) + '</b> (' + fmt(t) + ' pcs)'; }
-  btn.disabled = !canCount() || need || !t;
+  btn.disabled = !canCount() || need || !t || !S.current.cond;
+  if (!S.current.cond && t && !need) pv.innerHTML += ' · <span class="neg">Pilih kondisi stok dulu</span>';
 }
 function submitCard(){
   if (!S.current) return;
-  if (addCount(S.current.prod, S.current.code, readQty())) { closeCard(); scanMsg(''); $('#scanInput').focus(); }
+  if (addCount(S.current.prod, S.current.code, readQty(), S.current.cond)) { closeCard(); scanMsg(''); $('#scanInput').focus(); }
 }
 
 /* ================= kamera ================= */
 const Cam = {active: false, stream: null, timer: null, h5: null, last: '', lastAt: 0};
-const CAM_FORMATS = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'itf', 'qr_code'];
+const CAM_FORMATS = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'itf'];
 function camMsg(html){ $('#camMsg').innerHTML = html; }
 async function openCam(){
   if (!canCount()) { toast(whyNoCount()); return; }
@@ -490,19 +531,23 @@ async function openCam(){
       video.hidden = false; video.srcObject = Cam.stream; await video.play();
       const loop = async () => {
         if (!Cam.active) return;
-        try { const r = await det.detect(video); if (r.length) onCamCode(r[0].rawValue); } catch(e){}
+        try { const r = await det.detect(video); if (r.length) onCamCode((r.find(x => lookup(x.rawValue).length) || r[0]).rawValue); } catch(e){}
         Cam.timer = setTimeout(loop, 150);
       };
       loop(); return;
     } catch(e){ stopStream(); if (e && e.name === 'NotAllowedError') { camMsg('Izin kamera ditolak. Izinkan kamera di pengaturan browser.'); return; } }
   }
   try {
-    video.hidden = true;
+    video.hidden = true; $('.cam-wrap').classList.add('h5');
     if (!window.Html5Qrcode) await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js');
     if (!Cam.active) return;
     Cam.h5 = new window.Html5Qrcode('camFallback');
-    await Cam.h5.start({facingMode: 'environment'}, {fps: 10, qrbox: {width: 260, height: 120}}, txt => onCamCode(txt), () => {});
+    await Cam.h5.start({facingMode: 'environment'}, {fps: 10, qrbox: (w, h) => ({width: Math.floor(w * 0.85), height: Math.floor(Math.min(h, w) * 0.4)}), formatsToSupport: h5Formats()}, txt => onCamCode(txt), () => {});
   } catch(e){ camMsg('Kamera tidak bisa dibuka: ' + esc(e.message || e) + '. Pakai scanner atau ketik SKU.'); }
+}
+function h5Formats(){
+  const F = window.Html5QrcodeSupportedFormats; if (!F) return undefined;
+  return ['EAN_13', 'EAN_8', 'UPC_A', 'UPC_E', 'CODE_128', 'CODE_39', 'ITF'].map(k => F[k]).filter(v => v != null);
 }
 function onCamCode(code){
   const t = Date.now();
@@ -519,7 +564,7 @@ function stopStream(){
 }
 async function closeCam(){
   if (!Cam.active) return;
-  Cam.active = false; $('#camModal').hidden = true; stopStream();
+  Cam.active = false; $('#camModal').hidden = true; stopStream(); $('.cam-wrap').classList.remove('h5');
   if (Cam.h5) { try { await Cam.h5.stop(); Cam.h5.clear(); } catch(e){} Cam.h5 = null; }
 }
 
@@ -552,6 +597,8 @@ function renderHitung(){
   $('#quickOn').checked = S.quickOn;
   $('#quickUnit').classList.toggle('off', !S.quickOn);
   document.querySelectorAll('#quickUnit button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.u === S.quickUnit)));
+  $('#quickCond').classList.toggle('off', !S.quickOn); $('#quickCondHint').classList.toggle('off', !S.quickOn || !!S.quickCond);
+  document.querySelectorAll('#quickCond button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.c === S.quickCond)));
   updatePreview();
   renderHitungLists();
 }
@@ -601,24 +648,24 @@ function renderHitungLists(){
     : lview.map(r => {
     const e = r.e, p = r.p, isi = isiOf(e.sku);
     const nm = esc(p ? p.n : '(tidak ada di DMS)');
-    if (S.editingLog === e.id) return `<li class="log-edit">${stIco(e.sku)}<div class="it-i"><div class="sk">${esc(e.sku)}</div><div class="nm">${nm}</div></div><span></span>
+    if (S.editingLog === e.id) return `<li class="log-edit">${stIco(e.sku)}<div class="it-i"><div class="sk">${skuHtml(e.sku)}</div><div class="nm">${nm}</div></div><span></span>
         <div class="le-in">
           <div><label for="le-k">Karton</label><input type="text" id="le-k" inputmode="numeric" maxlength="6" autocomplete="off" value="${e.k || 0}" ${isi > 0 ? '' : 'disabled'}></div>
           <div><label for="le-l">Lusin</label><input type="text" id="le-l" inputmode="numeric" maxlength="6" autocomplete="off" value="${e.l || 0}"></div>
           <div><label for="le-p">Pcs</label><input type="text" id="le-p" inputmode="numeric" maxlength="6" autocomplete="off" value="${e.p || 0}"></div></div>
         <div class="le-act"><button class="btn sm primary" type="button" data-lsave="${esc(e.id)}">Simpan</button><button class="btn sm" type="button" data-lcancel="1">Tutup</button></div></li>`;
-    if (S.confirmLog === e.id) return `<li class="log-edit">${stIco(e.sku)}<div class="it-i"><div class="sk">${esc(e.sku)}</div><div class="nm">${nm}</div></div><span></span>
+    if (S.confirmLog === e.id) return `<li class="log-edit">${stIco(e.sku)}<div class="it-i"><div class="sk">${skuHtml(e.sku)}</div><div class="nm">${nm}</div></div><span></span>
         <div class="confirm"><span>Batalkan scan +${esc(fmtFull(e))}?</span><button class="btn sm danger" type="button" data-undoyes="${esc(e.id)}">Ya, batalkan</button><button class="btn sm" type="button" data-lcancel="1">Tidak</button></div></li>`;
     const acts = recent.has(e.id) && canCount() ? `<div class="it-a">${IB.edit('data-ledit="' + esc(e.id) + '"', 'Koreksi scan')}${IB.del('data-undo="' + esc(e.id) + '"', 'Batalkan scan')}</div>` : '<span></span>';
-    return `<li>${stIco(e.sku)}<div class="it-i"><div class="sk">${esc(e.sku)}</div><div class="nm">${nm}</div><div class="it-q"><span>+${esc(fmtFull(e))}</span>${tagsFor(r.pend, e.cor)}</div></div>${acts}</li>`;
+    return `<li>${stIco(e.sku)}<div class="it-i"><div class="sk">${skuHtml(e.sku)}</div><div class="nm">${nm}</div><div class="it-q"><span>+${esc(fmtFull(e))}</span>${tagsFor(r.pend, e.cor)}</div></div>${acts}</li>`;
   }).join('');
 
   const entries = Object.entries(local.items).sort((a, b) => String(b[1].at || '').localeCompare(String(a[1].at || '')));
-  let totalPcs = 0, sumK = 0, sumL = 0, sumP = 0;
+  let totalPcs = 0, badPcs = 0, sumK = 0, sumL = 0, sumP = 0;
   const can = canCount();
   const mrows = entries.map(([sku, it]) => {
     const p = productFor(sku); const isi = isiOf(sku); const t = toPcs(it, isi); const n = normQ(it, isi);
-    totalPcs += t; sumK += n.k; sumL += n.l; sumP += n.p;
+    if (isBad(sku)) badPcs += t; else { totalPcs += t; sumK += n.k; sumL += n.l; sumP += n.p; }
     return {sku, it, p, isi, t, n, name: p ? p.n : sku, out: !p, pend: !!S.dirty[sku], cor: !!it.cor};
   });
   const mview = viewRows(mrows, S.qMy, x => x.sku === S.editing || x.sku === S.confirmDel);
@@ -634,22 +681,23 @@ function renderHitungLists(){
     else if (S.confirmDel === sku) extra = `<div class="confirm"><span>Hapus semua hitungan ${esc(sku)} dari device ini?</span><button class="btn sm danger" type="button" data-delyes="${esc(sku)}">Ya, hapus</button><button class="btn sm" type="button" data-cancel="1">Batal</button></div>`;
     const busy = S.editing === sku || S.confirmDel === sku;
     const acts = can && !busy ? `<div class="it-a">${IB.edit('data-edit="' + esc(sku) + '"', 'Koreksi')}${IB.del('data-del="' + esc(sku) + '"', 'Hapus')}</div>` : '<span></span>';
-    return `<div class="mi">${stIco(sku)}<div class="it-i"><div class="nm">${esc(p ? p.n : '(tidak ada di DMS)')}</div><div class="sk">${esc(sku)} · ${fmt(t)} pcs</div><div class="it-q"><span>${esc(fmtFull(n))}</span>${tagsFor(!!S.dirty[sku], it.cor)}</div></div>${acts}${extra}</div>`;
+    return `<div class="mi">${stIco(sku)}<div class="it-i"><div class="nm">${esc(p ? p.n : '(tidak ada di DMS)')}</div><div class="sk">${skuHtml(sku)} · ${fmt(t)} pcs</div><div class="it-q"><span>${esc(fmtFull(n))}</span>${tagsFor(!!S.dirty[sku], it.cor)}</div></div>${acts}${extra}</div>`;
   });
   $('#myList').innerHTML = !mrows.length ? '<div class="empty">Belum ada barang yang dihitung dari device ini. Setiap barang yang Anda tambahkan muncul di sini dan bisa dikoreksi.</div>'
     : !rows.length ? '<div class="empty">' + noHit('my', S.qMy) + '</div>' : rows.join('');
-  $('#heroDone').textContent = fmt(entries.length);
-  const nOut = mrows.filter(x => x.out).length;
-  $('#heroIn').textContent = fmt(mrows.length - nOut); $('#heroOut').textContent = fmt(nOut);
+  const nSku = new Set(entries.map(([k]) => baseSku(k))).size;
+  $('#heroDone').textContent = fmt(nSku);
+  const nOut = new Set(mrows.filter(x => x.out).map(x => baseSku(x.sku))).size;
+  $('#heroIn').textContent = fmt(nSku - nOut); $('#heroOut').textContent = fmt(nOut);
   $('#heroK').textContent = fmt(sumK); $('#heroL').textContent = fmt(sumL); $('#heroP').textContent = fmt(sumP);
   const nMaster = S.master.items.length;
-  const pct = nMaster ? Math.min(100, Math.round(entries.length / nMaster * 100)) : 0;
+  const pct = nMaster ? Math.min(100, Math.round(nSku / nMaster * 100)) : 0;
   $('#statCard').hidden = !nMaster;
-  $('#statLeft').textContent = fmt(Math.max(0, nMaster - entries.length));
+  $('#statLeft').textContent = fmt(Math.max(0, nMaster - nSku));
   $('#statPct').textContent = pct + '%';
   $('#statBar').style.width = pct + '%';
   $('#heroOf').textContent = nMaster ? 'dari ' + fmt(nMaster) + ' SKU dihitung' : 'SKU dihitung';
-  $('#myCount').textContent = entries.length ? entries.length + ' SKU · ' + fmt(totalPcs) + ' pcs' : '';
+  $('#myCount').textContent = entries.length ? nSku + ' SKU · ' + fmt(totalPcs) + ' pcs' + (badPcs ? ' · Bad ' + fmt(badPcs) + ' pcs' : '') : '';
 }
 
 /* ================= rekap ================= */
@@ -668,18 +716,21 @@ function recapDevices(){
   const list = [...map.values()];
   if (S.local && Object.keys(S.local.items).length) {
     const last = Object.values(S.local.items).reduce((a, it) => String(it.at || '') > a ? String(it.at) : a, '');
-    const mine = {}; Object.entries(S.local.items).forEach(([sku, it]) => { mine[sku] = Object.assign({}, it, wireItem(sku, it, (S.local.isi || {})[sku])); });
+    const mine = {}; Object.entries(S.local.items).forEach(([sku, it]) => { mine[sku] = Object.assign({}, it, wireItem(sku, it, (S.local.isi || {})[baseSku(sku)])); });
     list.push({id: S.deviceId, name: S.deviceName || 'Tanpa nama', items: mine, updatedAt: last, mine: true});
   }
   return list.sort((a, b) => String(a.name).localeCompare(String(b.name)));
 }
 function computeRecap(){
   const devs = recapDevices(); const rows = new Map();
-  for (const p of S.master.items) rows.set(p.s, {sku: p.s, b: p.b || '', name: p.n, isi: p.k || 0, dms: p.q || 0, inDms: true, per: {}, counted: 0, has: false});
-  for (const d of devs) for (const [sku, it] of Object.entries(d.items)) {
+  for (const p of S.master.items) rows.set(p.s, {sku: p.s, b: p.b || '', name: p.n, isi: p.k || 0, dms: p.q || 0, inDms: true, per: {}, counted: 0, has: false, bad: 0});
+  for (const d of devs) for (const [key, it] of Object.entries(d.items)) {
+    const sku = baseSku(key);
     let r = rows.get(sku);
-    if (!r) { r = {sku, b: '', name: '(tidak ada di DMS)', isi: 0, dms: 0, inDms: false, per: {}, counted: 0, has: false}; rows.set(sku, r); }
-    const t = toPcs(it, r.isi); r.per[d.id] = (r.per[d.id] || 0) + t; r.counted += t; r.has = true;
+    if (!r) { r = {sku, b: '', name: '(tidak ada di DMS)', isi: 0, dms: 0, inDms: false, per: {}, counted: 0, has: false, bad: 0}; rows.set(sku, r); }
+    const t = toPcs(it, r.isi);
+    if (isBad(key)) { r.bad += t; continue; }
+    r.per[d.id] = (r.per[d.id] || 0) + t; r.counted += t; r.has = true;
   }
   const out = [];
   for (const r of rows.values()) {
@@ -711,8 +762,9 @@ function rekapCard(r, devs){
   const difC = r.inDms && r.has ? cell('Selisih', (r.diff > 0 ? '+' : '') + fmt(r.diff), r.diff ? sign + conv(r.diff) : 'sesuai', r.diff < 0 ? 'neg' : r.diff > 0 ? 'pos' : 'okc') : cell('Selisih', '-', '');
   const per = devs.filter(d => r.per[d.id] != null);
   const sub = esc(r.sku) + ' · ' + (r.isi ? 'isi ' + fmt(r.isi) + ' pcs/karton' : 'isi karton belum ada') + (per.length === 1 ? ' · ' + esc(per[0].name) : '');
+  const badC = r.bad ? '<div class="rk-bad"><b>Bad Stock</b> ' + fmt(r.bad) + ' pcs · ' + conv(r.bad) + ' <em>(tidak masuk selisih)</em></div>' : '';
   const dv = per.length > 1 ? '<details class="devd"><summary>Per device <span>' + per.length + '</span></summary>' + per.map(d => '<div class="dvr"><span class="n">' + esc(d.name) + '</span><span><b>' + fmt(r.per[d.id]) + '</b> pcs · ' + conv(r.per[d.id]) + '</span></div>').join('') + '</details>' : '';
-  return '<div class="rk"><div class="rk-h"><span class="si ' + ic + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + path + '</svg></span><div class="it-i"><div class="nm">' + esc(r.name) + '</div><div class="sk">' + sub + '</div></div><span class="pill ' + r.status + '">' + STATUS_LABEL[r.status] + '</span></div><div class="rk-s">' + dmsC + cntC + difC + '</div>' + dv + '</div>';
+  return '<div class="rk"><div class="rk-h"><span class="si ' + ic + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + path + '</svg></span><div class="it-i"><div class="nm">' + esc(r.name) + '</div><div class="sk">' + sub + '</div></div><span class="pill ' + r.status + '">' + STATUS_LABEL[r.status] + '</span></div><div class="rk-s">' + dmsC + cntC + difC + '</div>' + badC + dv + '</div>';
 }
 function renderRekap(){
   const {devs, rows} = computeRecap();
@@ -744,7 +796,7 @@ function renderRekap(){
   $('#devCnt').textContent = devs.length ? devs.length + ' device' : '';
   const dsAll = devs.map(d => {
     const items = Object.entries(d.items); let t = 0;
-    items.forEach(([sku, it]) => { const p = productFor(sku); t += toPcs(it, p ? p.k : 0); });
+    items.forEach(([sku, it]) => { if (isBad(sku)) return; const p = productFor(sku); t += toPcs(it, p ? p.k : 0); });
     const age = d.updatedAt ? Date.now() - new Date(d.updatedAt).getTime() : Infinity;
     // status dari waktu update terakhir yang diterima server (bukan dari sinyal langsung HP)
     const st = d.mine ? (S.online ? 'on' : 'off') : age < 5 * 60000 ? 'on' : age < 15 * 60000 ? 'wait' : 'off';
@@ -765,7 +817,7 @@ function renderRekap(){
     const d = x.d, st = x.st, stTxt = {on: 'Aktif', wait: 'Menunggu', off: 'Tidak aktif'}[st];
     return `<div class="dev ${st}"><svg class="phone" viewBox="0 0 24 36" aria-hidden="true"><rect class="pb" x="2" y="1" width="20" height="34" rx="4"/><rect class="ps" x="5" y="6" width="14" height="21" rx="1.5"/><circle class="pd" cx="12" cy="31" r="1.4"/></svg>
       <div class="dv-i"><div class="n">${esc(d.name || 'Tanpa nama')} ${d.mine ? '<span class="you">device ini</span>' : ''}</div>
-      <div class="m">${fmt(x.n)} SKU · ${fmt(x.t)} pcs</div></div>
+      <div class="m">${fmt(new Set(Object.keys(d.items).map(baseSku)).size)} SKU · ${fmt(x.t)} pcs</div></div>
       <div class="dv-s"><span class="stp"><i></i>${stTxt}</span><span class="m">${esc(ago(d.updatedAt))}${d.updatedAt ? ' · ' + esc(fmtTime(d.updatedAt)) : ''}</span></div></div>`;
   };
   $('#devList').innerHTML = !dsAll.length ? '<div class="empty">Belum ada device yang menghitung di sesi ini. Salin link penghitung di tab Sesi dan bagikan ke tim gudang.</div>'
@@ -818,16 +870,16 @@ async function saveXlsx(filename, sheets){
 async function exportRekap(){
   const {devs, rows} = computeRecap(); const s = curSession();
   rows.sort((a, b) => a.sku.localeCompare(b.sku));
-  const head = ['SKU', 'Barcode', 'Nama', 'Isi Karton', ...devs.map(d => d.name + ' (pcs)'), 'Hitung Karton', 'Hitung Lusin', 'Hitung Pcs', 'Total Hitung (pcs)', 'Stok DMS (pcs)', 'Selisih (pcs)', 'Status'];
+  const head = ['SKU', 'Barcode', 'Nama', 'Isi Karton', ...devs.map(d => d.name + ' (pcs)'), 'Hitung Karton', 'Hitung Lusin', 'Hitung Pcs', 'Total Hitung Good (pcs)', 'Bad Stock (pcs)', 'Stok DMS (pcs)', 'Selisih Good (pcs)', 'Status'];
   const aoa = [head];
   for (const r of rows) {
     const o = klp(r.counted, r.isi);
-    aoa.push([r.sku, r.b, r.name, r.isi, ...devs.map(d => r.per[d.id] ?? ''), o.k, o.l, o.p, r.counted, r.inDms ? r.dms : '', r.diff, STATUS_LABEL[r.status]]);
+    aoa.push([r.sku, r.b, r.name, r.isi, ...devs.map(d => r.per[d.id] ?? ''), o.k, o.l, o.p, r.counted, r.bad || '', r.inDms ? r.dms : '', r.diff, STATUS_LABEL[r.status]]);
   }
-  const dev = [['Device', 'SKU', 'Karton', 'Lusin', 'Pcs', 'Total (pcs)']];
-  devs.forEach(d => Object.entries(d.items).forEach(([sku, it]) => { const p = productFor(sku); dev.push([d.name, sku, it.k || 0, it.l || 0, it.p || 0, toPcs(it, p ? p.k : 0)]); }));
+  const dev = [['Device', 'SKU', 'Kondisi', 'Karton', 'Lusin', 'Pcs', 'Total (pcs)']];
+  devs.forEach(d => Object.entries(d.items).forEach(([sku, it]) => { const p = productFor(sku); dev.push([d.name, baseSku(sku), isBad(sku) ? 'Bad Stock' : 'Good Stock', it.k || 0, it.l || 0, it.p || 0, toPcs(it, p ? p.k : 0)]); }));
   const name = 'stok-opname-' + (s ? s.name : 'sesi').replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-').toLowerCase() + '.xlsx';
-  await saveXlsx(name, [['Rekap', aoa, [16, 16, 36, 10]], ['Per Device', dev, [18, 16, 8, 8, 8, 12]]]);
+  await saveXlsx(name, [['Rekap', aoa, [16, 16, 36, 10]], ['Per Device', dev, [18, 16, 12, 8, 8, 8, 12]]]);
 }
 
 /* ================= import DMS ================= */
@@ -838,7 +890,8 @@ const ALIAS = {
   n: ['nama','nama_barang','nama_produk','name','product_name','deskripsi','description','item_name','namabarang'],
   k: ['isi_karton','isi','pcs_per_karton','konversi','isi_ctn','pcs_karton','qty_per_karton','isi_dus','isi_per_karton'],
   q: ['stok','stock','qty','stok_dms','saldo','stok_akhir','on_hand','qty_pcs','total_pcs'],
-  qk: ['stok_karton','karton','ctn','dus'], ql: ['stok_lusin','lusin','lsn','dzn'], qp: ['stok_pcs','pcs','stok_pcs_sisa','eceran']
+  a: ['ada_stok'],
+  qk: ['stok_karton','karton','ctn','dus'], ql:['stok_lusin','lusin','lsn','dzn'], qp: ['stok_pcs','pcs','stok_pcs_sisa','eceran']
 };
 function parseDelimited(text){
   const first = text.split(/\r?\n/)[0] || '';
@@ -874,9 +927,10 @@ function parseDmsRows(rows, fileName, noStock){
     const q = split ? qk * k + ql * 12 + qp : int(cell(r, 'q'));
     if (qk > 0 && !(k > 0)) noIsi++;
     const item = {s, n: cell(r, 'n') || s, k, q, qk, ql, qp};
+    if (noStock) { if (col.a != null) item.a = cell(r, 'a') === '1' ? 1 : 0; } else item.a = q > 0 ? 1 : 0;
     if (cell(r, 'b')) item.b = cell(r, 'b');
     if (cell(r, 'bk')) item.bk = cell(r, 'bk');
-    if (map.has(s)) { const m = map.get(s); m.q += q; m.qk += qk; m.ql += ql; m.qp += qp; dup++; } else map.set(s, item);
+    if (map.has(s)) { const m = map.get(s); m.q += q; m.qk += qk; m.ql += ql; m.qp += qp; if (item.a != null) m.a = (m.a || 0) | item.a; dup++; } else map.set(s, item);
   }
   return {items: [...map.values()], skipped, dup, noIsi, split, fileName, found: Object.keys(col).map(k => head[col[k]])};
 }
@@ -895,7 +949,7 @@ async function readDmsFile(f){
 }
 function importImpact(p){
   const cur = new Set(S.master.items.map(i => i.s)); const nxt = new Map(p.items.map(i => [i.s, i.k || 0]));
-  const counted = new Set([...(S.local ? Object.keys(S.local.items) : []), ...S.remote.map(r => r[2])]);
+  const counted = new Set([...(S.local ? Object.keys(S.local.items) : []), ...S.remote.map(r => r[2])].map(baseSku));
   const lost = [], changed = [];
   counted.forEach(sku => {
     if (!cur.has(sku)) return;
@@ -1121,8 +1175,10 @@ on('#scanBtn', 'click', handleScan);
 on('#camBtn', 'click', openCam);
 on('#fabCam', 'click', () => { if (S.tab !== 'hitung') setTab('hitung'); openCam(); });
 on('#camClose', 'click', closeCam);
-on('#suggest', 'click', e => { const b = e.target.closest('[data-sku]'); if (!b) return; const p = productFor(b.dataset.sku); $('#scanInput').value = ''; renderSuggest([]); scanMsg(''); if (p) openCard(p, p.s); });
-on('#quickOn', 'change', e => { S.quickOn = e.target.checked; LS.set('so-quick', S.quickOn ? '1' : '0'); renderSuggest([]); renderHitung(); });
+on('#suggest', 'click', e => { const b = e.target.closest('[data-sku]'); if (!b) return; const p = productFor(b.dataset.sku); const u = b.dataset.u || null; $('#scanInput').value = ''; renderSuggest([]); scanMsg(''); if (p) openCard(p, p.s, u); });
+on('#quickOn', 'change', e => { S.quickOn = e.target.checked; S.quickCond = null; LS.set('so-quick', S.quickOn ? '1' : '0'); renderSuggest([]); renderHitung(); });
+on('#quickCond', 'click', e => { const b = e.target.closest('[data-c]'); if (!b) return; S.quickCond = b.dataset.c; renderHitung(); });
+on('#condSeg', 'click', e => { const b = e.target.closest('[data-c]'); if (!b || !S.current) return; S.current.cond = b.dataset.c; document.querySelectorAll('#condSeg button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.c === S.current.cond))); updatePreview(); });
 on('#quickUnit', 'click', e => { const b = e.target.closest('[data-u]'); if (!b) return; S.quickUnit = b.dataset.u; LS.set('so-quick-unit', S.quickUnit); renderHitung(); });
 ['#qK', '#qL', '#qP', '#qI'].forEach(s => {
   $(s).addEventListener('input', updatePreview);
